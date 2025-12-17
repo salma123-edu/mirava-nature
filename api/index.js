@@ -140,12 +140,6 @@ app.post('/api/commandes', async (req, res) => {
 
         const { nom, email, telephone, adresse, modePaiement, produits, total, frais_livraison } = req.body;
 
-        const fallbackUri = "mongodb+srv://admin:admin123@cluster0.8owrk9t.mongodb.net/?appName=Cluster0";
-        if (!process.env.MONGO_URI && !fallbackUri) {
-            console.error("MONGO_URI manquant !");
-            return res.status(500).json({ success: false, message: "Erreur configuration serveur (DB)" });
-        }
-
         // Créer une nouvelle instance de commande
         const nouvelleCommande = new Commande({
             nom,
@@ -161,7 +155,7 @@ app.post('/api/commandes', async (req, res) => {
         // Sauvegarder la commande dans la base de données
         const commandeSauvegardee = await nouvelleCommande.save();
         console.log("Commande sauvegardée ID:", commandeSauvegardee._id);
-        res.status(201).json({ success: true, message: "Commande enregistrée avec succès !", data: commandeSauvegardee });
+        res.status(201).json({ success: true, version: "2.1", message: "Commande enregistrée avec succès !", data: commandeSauvegardee });
     } catch (error) {
         console.error("Erreur SAVE commande:", error);
         res.status(400).json({ success: false, message: "Erreur lors de l'enregistrement de la commande.", error: error.message });
