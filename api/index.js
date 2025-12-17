@@ -17,10 +17,30 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Connexion à MongoDB
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("MongoDB connecté"))
-    .catch(err => console.log(err));
+// Variable pour le cache de la connexion (Vercel Serverless behavior)
+let cachedDb = null;
+
+async function connectToDatabase() {
+    if (cachedDb) {
+        return cachedDb;
+    }
+    console.log("Connexion à MongoDB...");
+    try {
+        const db = await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
+        cachedDb = db;
+        console.log("MongoDB connecté !");
+        return db;
+    } catch (error) {
+        console.error("Erreur de connexion MongoDB:", error);
+        throw error;
+    }
+}
+
+// Connexion initiale (non bloquante)
+connectToDatabase().catch(err => console.error(err));
 
 // --- AUTHENTIFICATION ---
 
@@ -108,8 +128,19 @@ app.get('/api/commandes', protect, async (req, res) => {
 
 // Route pour créer une nouvelle commande
 app.post('/api/commandes', async (req, res) => {
+    console.log("Reçu POST /api/commandes");
+    console.log("Body:", JSON.stringify(req.body));
+
     try {
-        const { nom, email, telephone, adresse, modePaiement, produits, total } = req.body;
+        await connectToDatabase(); // S'assurer que la base est bien connectée
+
+        const { nom, email, telephone, adresse, modePaiement, produits, total, frais_livraison } = req.body;
+
+        // Validation basique
+        if (!process.env.MONGO_URI) {
+            console.error("MONGO_URI manquant !");
+            return res.status(500).json({ success: false, message: "Erreur configuration serveur (DB)" });
+        }
 
         // Créer une nouvelle instance de commande
         const nouvelleCommande = new Commande({
@@ -119,14 +150,16 @@ app.post('/api/commandes', async (req, res) => {
             adresse,
             modePaiement,
             produits,
-            frais_livraison: req.body.frais_livraison || 0,
+            frais_livraison: frais_livraison || 0,
             total
         });
 
         // Sauvegarder la commande dans la base de données
         const commandeSauvegardee = await nouvelleCommande.save();
+        console.log("Commande sauvegardée ID:", commandeSauvegardee._id);
         res.status(201).json({ success: true, message: "Commande enregistrée avec succès !", data: commandeSauvegardee });
     } catch (error) {
+        console.error("Erreur SAVE commande:", error);
         res.status(400).json({ success: false, message: "Erreur lors de l'enregistrement de la commande.", error: error.message });
     }
 });

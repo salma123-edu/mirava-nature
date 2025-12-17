@@ -215,7 +215,8 @@
             if (typeof window.updateCartUI === 'function') window.updateCartUI();
             location.href = 'confirmation.html';
           } else {
-            alert('Erreur lors de la commande : ' + (data.message || JSON.stringify(data)));
+            const errorMsg = data.error ? `\nDétail: ${data.error}` : '';
+            alert('Erreur lors de la commande : ' + (data.message || 'Erreur inconnue') + errorMsg);
           }
         } catch (err) {
           alert('Erreur réseau : ' + err.message);
