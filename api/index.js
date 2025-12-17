@@ -28,9 +28,14 @@ mongoose.connect(process.env.MONGO_URI)
 app.post('/api/auth/login', (req, res) => {
     const { username, password } = req.body;
 
-    if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+    // Fallback aux identifiants par défaut si les variables d'env ne sont pas définies sur Vercel
+    const validUser = process.env.ADMIN_USERNAME || 'admin';
+    const validPass = process.env.ADMIN_PASSWORD || 'salma2004';
+
+    if (username === validUser && password === validPass) {
         // Créer un token
-        const token = jwt.sign({ username: username }, process.env.JWT_SECRET, { expiresIn: '8h' });
+        const secret = process.env.JWT_SECRET || 'fallback_secret_key_12345';
+        const token = jwt.sign({ username: username }, secret, { expiresIn: '8h' });
         res.json({ success: true, token: token });
     } else {
         res.status(401).json({ success: false, message: "Identifiants incorrects" });
