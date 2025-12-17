@@ -25,7 +25,7 @@ async function connectToDatabase() {
         return cachedDb;
     }
     console.log("Connexion à MongoDB...");
-    const fallbackUri = "mongodb+srv://salma:salma2004@cluster0.8owrk9t.mongodb.net/?appName=Cluster0";
+    const fallbackUri = "mongodb+srv://admin:admin123@cluster0.8owrk9t.mongodb.net/?appName=Cluster0";
     const uri = process.env.MONGO_URI || fallbackUri;
 
     try {
@@ -140,8 +140,8 @@ app.post('/api/commandes', async (req, res) => {
 
         const { nom, email, telephone, adresse, modePaiement, produits, total, frais_livraison } = req.body;
 
-        // Validation basique
-        if (!process.env.MONGO_URI) {
+        const fallbackUri = "mongodb+srv://admin:admin123@cluster0.8owrk9t.mongodb.net/?appName=Cluster0";
+        if (!process.env.MONGO_URI && !fallbackUri) {
             console.error("MONGO_URI manquant !");
             return res.status(500).json({ success: false, message: "Erreur configuration serveur (DB)" });
         }
