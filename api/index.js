@@ -21,29 +21,29 @@ app.use(bodyParser.json());
 let cachedDb = null;
 
 async function connectToDatabase() {
-    if (cachedDb) {
+    if (cachedDb && mongoose.connection.readyState === 1) {
         return cachedDb;
     }
-    console.log("Connexion à MongoDB...");
-    const fallbackUri = "mongodb+srv://admin:admin123@cluster0.8owrk9t.mongodb.net/?appName=Cluster0";
-    const uri = process.env.MONGO_URI || fallbackUri;
+
+    // URI de secours (Atlas Cloud)
+    const atlasUri = "mongodb+srv://admin:admin123@cluster0.8owrk9t.mongodb.net/?appName=Cluster0";
+    const uri = process.env.MONGO_URI || atlasUri;
+
+    console.log("Tentative de connexion MongoDB (v2.2)...");
 
     try {
-        const db = await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
+        const db = await mongoose.connect(uri);
         cachedDb = db;
-        console.log("MongoDB connecté !");
+        console.log("DB Connectée avec succès (v2.2)");
         return db;
     } catch (error) {
-        console.error("Erreur de connexion MongoDB:", error);
+        console.error("ÉCHEC Connexion MongoDB (v2.2):", error.message);
         throw error;
     }
 }
 
-// Connexion initiale (non bloquante)
-connectToDatabase().catch(err => console.error(err));
+// Connexion d'amorçage
+connectToDatabase().catch(err => console.error("Initial connection failed:", err.message));
 
 // --- AUTHENTIFICATION ---
 
@@ -154,8 +154,12 @@ app.post('/api/commandes', async (req, res) => {
 
         // Sauvegarder la commande dans la base de données
         const commandeSauvegardee = await nouvelleCommande.save();
-        console.log("Commande sauvegardée ID:", commandeSauvegardee._id);
-        res.status(201).json({ success: true, version: "2.1", message: "Commande enregistrée avec succès !", data: commandeSauvegardee });
+        console.log("Commande OK (v2.2) ID:", commandeSauvegardee._id);
+        res.status(201).json({
+            success: true,
+            version: "2.2 (FINAL)",
+            message: "Commande enregistrée ! 🎉"
+        });
     } catch (error) {
         console.error("Erreur SAVE commande:", error);
         res.status(400).json({ success: false, message: "Erreur lors de l'enregistrement de la commande.", error: error.message });
