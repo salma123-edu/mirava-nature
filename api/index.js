@@ -34,7 +34,7 @@ app.post('/api/auth/login', (req, res) => {
 
     if (username === validUser && password === validPass) {
         // Créer un token
-        const secret = process.env.JWT_SECRET || 'fallback_secret_key_12345';
+        const secret = 'super_secret_mirava_2025';
         const token = jwt.sign({ username: username }, secret, { expiresIn: '8h' });
         res.json({ success: true, token: token });
     } else {
@@ -49,7 +49,7 @@ function protect(req, res, next) {
         const bearer = bearerHeader.split(' ');
         const bearerToken = bearer[1];
 
-        const secret = process.env.JWT_SECRET || 'fallback_secret_key_12345';
+        const secret = 'super_secret_mirava_2025';
         jwt.verify(bearerToken, secret, (err, authData) => {
             if (err) {
                 res.sendStatus(403); // Forbidden

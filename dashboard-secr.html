@@ -408,9 +408,9 @@
                     });
 
                     if (response.status === 403 || response.status === 401) {
-                        showToast("Session expirée. Veuillez vous reconnecter.", "error");
-                        localStorage.removeItem('authToken');
-                        window.location.href = 'connexion-privee.html';
+                        showToast(`Erreur d'authentification (${response.status}) - Token invalide`, "error");
+                        console.log("Auth failed", response.status);
+                        // window.location.href = 'connexion-privee.html'; // DESACTIVE POUR DEBUG
                         return;
                     }
 
