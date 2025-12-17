@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Détail coffret - MIRAVA NATURE</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* styles spécifiques si le CSS global manque de .add-btn */
+    .add-btn{
+      background:#ff7a59;color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700;
+    }
+    .kit-contents { display:flex; gap:14px; flex-wrap:wrap; margin-top:18px; }
+    .kit-item { width:140px; text-align:center; background: #fff; padding:8px; border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,0.04); }
+    .kit-item img{ width:100%; border-radius:8px; object-fit:cover; height:120px; }
+    .kit-item .add-item { margin-top:8px; display:inline-block; font-size:13px; padding:6px 8px; }
+  </style>
+</head>
+<body>
+  <!-- header shared -->
+  <header>
+    <div class="container">
+      <a href="acceuil.html" class="logo"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
+      <nav>
+        <a href="acceuil.html">Accueil</a>
+        <a href="products.html">Produits</a>
+        <a href="kits.html" class="active">Coffrets</a>
+        <a href="contact.html">Contact</a>
+        <div class="cart-container">
+          <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
+          <div id="mini-cart" class="mini-cart" aria-hidden="true">
+            <h4>Votre panier</h4>
+            <div id="mini-cart-items"></div>
+            <p id="mini-cart-total" class="mini-cart-total">Panier vide</p>
+            <a href="panier.html" class="btn-mini-cart">Voir le panier</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="kit-detail container" id="kit-detail"></section>
+  </main>
+
+  <footer>
+    <div class="container"><p>&copy; 2025 MIRAVA NATURE</p></div>
+  </footer>
+
+  <script src="products-data.js"></script>
+  <script src="kits-data.js"></script>
+  <script src="cart.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    const container = document.getElementById('kit-detail');
+    if (!id || typeof allKits === 'undefined') {
+      container.innerHTML = '<p>Coffret introuvable.</p>';
+      return;
+    }
+    const kit = allKits[id];
+    if (!kit) { container.innerHTML = '<p>Coffret introuvable.</p>'; return; }
+
+    // Construire contenu des produits du coffret (sans bouton "Ajouter" individuel)
+    const contentsHtml = (kit.contents || []).map(pid => {
+      const p = (typeof allProducts !== 'undefined' && allProducts[pid]) ? allProducts[pid] : null;
+      const img = p ? p.image : 'images/placeholder.png';
+      const name = p ? p.name : pid;
+      const price = p ? p.price : 0;
+      return `
+        <div class="kit-item" data-pid="${pid}">
+          <img src="${img}" alt="${name}" />
+          <div style="margin-top:8px;font-weight:600">${name}</div>
+          <div class="text-muted">${price ? price + ' MAD' : ''}</div>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="kit-header" style="display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:0 0 480px">
+          <img src="${kit.image}" alt="${kit.name}" style="width:100%;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,0.06)" />
+        </div>
+        <div class="kit-info" style="flex:1;min-width:260px">
+          <h1 style="font-family: 'Playfair Display', serif;">${kit.name}</h1>
+          <p style="color:#666">${kit.short_description || ''}</p>
+          <p class="price" style="font-size:20px;font-weight:800;color:var(--accent)">${kit.price} MAD</p>
+          <button id="add-kit" class="add-btn add-to-cart" data-id="${kit.id}" data-name="${escapeHtml(kit.name)}" data-price="${kit.price}">+ Ajouter le coffret au panier</button>
+          <h3 style="margin-top:18px">Contenu du coffret</h3>
+          <div class="kit-contents">${contentsHtml}</div>
+        </div>
+      </div>
+    `;
+
+    // ajout du coffret entier au panier
+    const addKitBtn = document.getElementById('add-kit');
+    if (addKitBtn) {
+      addKitBtn.addEventListener('click', () => {
+        const item = {
+          id: kit.id,
+          name: kit.name,
+          price: kit.price,
+          qty: 1
+        };
+        if (typeof window.addToCart === 'function') {
+          window.addToCart(item);
+        } else {
+          // fallback
+          const cart = JSON.parse(localStorage.getItem('cart')) || [];
+          const existing = cart.find(i => i.id === item.id);
+          if (existing) existing.qty += 1; else cart.push(item);
+          localStorage.setItem('cart', JSON.stringify(cart));
+          if (typeof window.updateCartUI === 'function') window.updateCartUI();
+        }
+        addKitBtn.textContent = '✅ Ajouté';
+        setTimeout(() => addKitBtn.textContent = '+ Ajouter le coffret au panier', 900);
+      });
+    }
+
+    // Aucun bouton "Ajouter" par produit — l'utilisateur ajoute le coffret entier via #add-kit
+
+    // afficher compteur actuel
+    if (typeof window.updateCartUI === 'function') window.updateCartUI();
+  });
+
+  // small helper escape (client-side)
+  function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+  </script>
+</body>
+</html>

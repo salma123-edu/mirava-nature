@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accueil - MIRAVA NATURE</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* --- Styles généraux améliorés --- */
+    :root {
+        --primary-color: #8b734a; /* Brun doux */
+        --secondary-color: #4b6e4f; /* Vert nature */
+    }
+    /* --- Animation douce du mini-panier --- */
+    .mini-cart {
+      position: absolute;
+      right: 0;
+      top: 50px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
+      width: 250px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .mini-cart.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cart-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .cart-btn {
+      background: #4b6e4f;
+      color: #fff;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .cart-btn:hover {
+      background: #7aa883;
+    }
+
+    .mini-cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .btn-mini-cart {
+      display: block;
+      text-align: center;
+      background: #4b6e4f;
+      color: #fff;
+      padding: 8px;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .btn-mini-cart:hover {
+      background: #7aa883;
+    }
+
+    /* --- Nouvelle section Hero --- */
+    .hero {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://via.placeholder.com/1500x600.png/f7f4e9/8b734a?text=Image+de+vos+produits');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+        padding: 120px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .hero h2 {
+        font-size: 42px;
+        margin-bottom: 15px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    }
+    .hero p {
+        font-size: 18px;
+        max-width: 600px;
+        margin-bottom: 30px;
+    }
+    .hero .btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .hero .btn:hover {
+        background-color: white;
+        color: var(--primary-color);
+        transform: translateY(-3px);
+    }
+
+    /* --- Nouvelle section de présentation --- */
+    #presentation {
+        padding: 60px 20px;
+        text-align: center;
+    }
+    #presentation h2 {
+        font-size: 32px;
+        color: var(--primary-color);
+        margin-bottom: 40px;
+    }
+    .engagements-grid {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+    .engagement-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        width: 300px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.07);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .engagement-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .engagement-card h3 {
+        font-size: 22px;
+        color: var(--secondary-color);
+    }
+
+    /* Promo bar en haut de la page */
+    .promo-bar{
+      background: #f6f3e9;
+      color:#2e3a2b;
+      padding:10px 16px;
+      text-align:center;
+      font-weight:700;
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      align-items:center;
+      border-bottom:1px solid rgba(0,0,0,0.05);
+    }
+    .promo-bar .promo-cta{
+      background:#4b6e4f;
+      color:#fff;
+      border:none;
+      padding:6px 10px;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:600;
+    }
+  </style>
+</head>
+<body>
+  <!-- Barre promo en haut (message global) -->
+  <div id="promo-bar" class="promo-bar" aria-live="polite">
+    <div id="promo-text"></div>
+  </div>
+<header>
+  <div class="container">
+    <a href="acceuil.html">
+      <img src="images/logo.png" alt="Logo Mirava Nature" />
+    </a>
+    <nav>
+      <a href="acceuil.html" class="active">Accueil</a>
+      <a href="products.html">Produits</a>
+      <a href="kits.html">Coffrets</a>
+      <a href="contact.html">Contact</a>
+
+      <div class="cart-container">
+        <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
+        <div id="mini-cart" class="mini-cart">
+          <h4>Votre panier</h4>
+          <div id="mini-cart-items"></div>
+          <p id="mini-cart-total"></p>
+          <a href="panier.html" class="btn-mini-cart">Voir le panier</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h2>Bienvenue chez MIRAVA NATURE 🌿</h2>
+  <p>Des soins artisanaux, 100% naturels, pour sublimer votre beauté au quotidien.</p>
+  <a href="products.html" class="btn">Découvrir nos produits</a>
+</section>
+
+<section id="presentation">
+  <div class="container">
+    <h2>Nos engagements</h2>
+    <div class="engagements-grid">
+      <div class="engagement-card">
+        <h3>🌿 100% Naturel</h3>
+        <p>Chaque produit est formulé avec des ingrédients purs et bruts, pour le plus grand respect de votre peau.</p>
+      </div>
+      <div class="engagement-card">
+        <h3>👐 Fait Main</h3>
+        <p>Nos soins sont préparés avec amour dans notre atelier, garantissant une qualité et une fraîcheur uniques.</p>
+      </div>
+      <div class="engagement-card">
+        <h3>🌍 Éthique</h3>
+        <p>Nous privilégions les ingrédients locaux et des emballages respectueux de l'environnement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="about">
+  <div class="container">
+    <h2>Notre histoire</h2>
+    <p>
+      MIRAVA NATURE est née de la passion pour les cosmétiques naturels et artisanaux. 
+      Nous croyons en la beauté saine et respectueuse de votre peau.
+    </p>
+    
+    <h2>Nos valeurs</h2>
+    <ul>
+      <li>100 % naturel et fait main</li>
+      <li>Respect de l’environnement et durabilité</li>
+      <li>Qualité premium accessible</li>
+    </ul>
+    
+    <h2>Notre atelier</h2>
+    <p>Chaque produit est préparé avec soin dans notre atelier marocain, en utilisant uniquement des ingrédients de qualité, locaux et bio lorsque possible.</p>
+  </div>
+</section>
+
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 MIRAVA NATURE |
+      <a href="https://instagram.com">Instagram</a> |
+      <a href="https://facebook.com">Facebook</a>
+    </p>
+  </div>
+</footer>
+
+<script src="js/cart.js"></script>
+
+<!-- ==================== SCRIPT DU PANIER ==================== -->
+<script>
+// --- Mise à jour de l’affichage du panier ---
+function updateCartUI() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const countElem = document.getElementById("cart-count");
+  const miniCartItems = document.getElementById("mini-cart-items");
+  const miniCartTotal = document.getElementById("mini-cart-total");
+
+  if (!countElem) return;
+
+  let totalQty = 0;
+  let totalPrice = 0;
+  miniCartItems.innerHTML = "";
+
+  cart.forEach((item) => {
+    totalQty += item.qty;
+    totalPrice += item.price * item.qty;
+
+    const div = document.createElement("div");
+    div.classList.add("mini-cart-item");
+    div.innerHTML = `<span>${item.name}</span><span>${item.qty} × ${item.price} MAD</span>`;
+    miniCartItems.appendChild(div);
+  });
+
+  countElem.textContent = totalQty;
+  miniCartTotal.textContent = cart.length
+    ? `Total : ${totalPrice} MAD`
+    : "Panier vide";
+}
+
+// --- Afficher ou cacher le mini-panier ---
+document.addEventListener("DOMContentLoaded", () => {
+  const cartToggle = document.getElementById("cart-toggle");
+  const miniCart = document.getElementById("mini-cart");
+
+  if (!cartToggle || !miniCart) return;
+
+  cartToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    miniCart.classList.toggle("show");
+  });
+
+  // Ferme le panier si on clique ailleurs
+  document.addEventListener("click", (e) => {
+    if (!miniCart.contains(e.target) && !cartToggle.contains(e.target)) {
+      miniCart.classList.remove("show");
+    }
+  });
+
+  updateCartUI();
+});
+
+// --- Synchronise le panier entre les pages ---
+window.addEventListener("storage", updateCartUI);
+</script>
+
+<script>
+  (function(){
+    function updatePromoBar(){
+      const target = document.getElementById('promo-text');
+      const action = document.getElementById('promo-action');
+      if(!target) return;
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const total = cart.reduce((s,i) => s + ((i.price||0) * (i.qty||0)), 0);
+      const threshold = 500;
+      if(total >= threshold){
+        target.textContent = `Félicitations — livraison gratuite ! Total panier : ${total} DH`;
+        action.style.display = 'inline-block';
+      } else {
+        const remaining = Math.max(0, threshold - total);
+        target.textContent = `Si vous avez ${threshold} DH d'achat, vous aurez la livraison gratuite. Il vous manque ${remaining} DH.`;
+        action.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const action = document.getElementById('promo-action');
+      if(action) action.addEventListener('click', () => location.href = 'panier.html');
+      updatePromoBar();
+    });
+
+    // mise à jour si le panier change dans un autre onglet
+    window.addEventListener('storage', updatePromoBar);
+  })();
+</script>
+
+<!-- Remplace le script dynamique précédent par ce petit script -->
+<script>
+(function(){
+  // Message global affiché dans la barre promo
+  const GLOBAL_PROMO_MESSAGE = "✨ Profitez de la livraison gratuite dès 500 DH d’achat.  ✨";
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('promo-text');
+    if (el) el.textContent = GLOBAL_PROMO_MESSAGE;
+  });
+})();
+</script>
+</body>
+</html>

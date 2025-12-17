@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact - MIRAVA NATURE</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="acceuil.html">
+      <img src="images/logo.png" alt="Logo Mirava Nature" />
+    </a>
+    <nav>
+      <a href="acceuil.html">Accueil</a>
+      <a href="products.html">Produits</a>
+      <a href="kits.html">Coffrets</a>
+      <a href="contact.html">Contact</a>
+
+      <div class="cart-container">
+        <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
+        <div id="mini-cart" class="mini-cart">
+          <h4>Votre panier</h4>
+          <div id="mini-cart-items"></div>
+          <p id="mini-cart-total"></p>
+          <a href="panier.html" class="btn-mini-cart">Voir le panier</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<section id="contact">
+  <div class="container">
+    <h2>Contact / Précommande</h2>
+    <p>Pour toute question ou précommande, remplissez le formulaire ci-dessous :</p>
+    <form action="#" method="POST">
+      <input type="text" name="name" placeholder="Votre nom" required />
+      <input type="email" name="email" placeholder="Votre email" required />
+      <textarea name="message" placeholder="Votre message / commande" required></textarea>
+      <button type="submit">Envoyer</button>
+    </form>
+    <p>Ou contactez-nous via nos réseaux sociaux :</p>
+    <p>
+      <a href="https://instagram.com">Instagram</a> |
+      <a href="https://facebook.com">Facebook</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      &copy; 2025 MIRAVA NATURE |
+      <a href="https://instagram.com">Instagram</a> |
+      <a href="https://facebook.com">Facebook</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+// --- Met à jour le compteur et le mini-panier ---
+function updateCartUI() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const countElem = document.getElementById("cart-count");
+  const miniCartItems = document.getElementById("mini-cart-items");
+  const miniCartTotal = document.getElementById("mini-cart-total");
+
+  if (!countElem) return;
+
+  let totalQty = 0;
+  let totalPrice = 0;
+  miniCartItems.innerHTML = "";
+
+  cart.forEach((item) => {
+    totalQty += item.qty;
+    totalPrice += item.price * item.qty;
+
+    const div = document.createElement("div");
+    div.classList.add("mini-cart-item");
+    div.innerHTML = `<span>${item.name}</span><span>${item.qty} × ${item.price} MAD</span>`;
+    miniCartItems.appendChild(div);
+  });
+
+  countElem.textContent = totalQty;
+  miniCartTotal.textContent = cart.length
+    ? `Total : ${totalPrice} MAD`
+    : "Panier vide";
+}
+
+// --- Ouverture et fermeture du mini-panier ---
+document.addEventListener("DOMContentLoaded", () => {
+  const cartToggle = document.getElementById("cart-toggle");
+  const miniCart = document.getElementById("mini-cart");
+
+  if (!cartToggle || !miniCart) return;
+
+  cartToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    miniCart.classList.toggle("show");
+  });
+
+  // Laisse le mini-panier affiché tant que l'utilisateur ne reclique pas
+  document.addEventListener("click", (e) => {
+    if (!miniCart.contains(e.target) && !cartToggle.contains(e.target)) {
+      // On peut commenter la ligne suivante si on veut qu’il reste ouvert :
+      // miniCart.classList.remove("show");
+    }
+  });
+
+  updateCartUI();
+});
+
+// --- Synchronise entre les pages ---
+window.addEventListener("storage", updateCartUI);
+</script>
+</body>
+</html>

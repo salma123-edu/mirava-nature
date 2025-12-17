@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Finaliser la commande - MIRAVA NATURE</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .checkout { max-width:900px; margin:36px auto; padding:20px; background:#fff; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.04); }
+    .summary-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #eee}
+    .summary-row.total{font-weight:800;font-size:18px}
+    .shipping-options{margin:10px 0;display:flex;gap:12px;align-items:center}
+    .muted{color:#7b7b7b;font-size:14px}
+    .form-field{margin:10px 0}
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="acceuil.html"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
+    <nav>
+      <a href="acceuil.html">Accueil</a>
+      <a href="products.html">Produits</a>
+      <a href="kits.html">Coffrets</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div class="checkout">
+    <h2>Finaliser la commande</h2>
+
+    <section id="order-items">
+      <h3>Résumé du panier</h3>
+      <div id="items-list"></div>
+      <div class="summary-row"><div>Sous-total</div><div id="subtotal">0 DH</div></div>
+
+      <h3>Frais de livraison</h3>
+      <div id="shipping-area">
+        <!-- si >=500DH on affichera 0DH, sinon affichera options -->
+        <div id="shipping-automatic" class="muted" style="display:none;">Frais de livraison : <strong id="shipping-amount">0 DH</strong></div>
+
+        <div id="shipping-choices" style="display:none;">
+          <div class="shipping-options">
+            <label><input type="radio" name="shipping" value="30" /> Hors Rabat — 30 DH</label>
+            <label><input type="radio" name="shipping" value="20" /> Sur Rabat — 20 DH</label>
+          </div>
+          <div class="muted">Choisissez votre zone pour calculer les frais.</div>
+        </div>
+      </div>
+
+      <div class="summary-row total"><div>Total</div><div id="grand-total">0 DH</div></div>
+    </section>
+
+    <section id="customer-form" style="margin-top:18px;">
+      <h3>Vos informations</h3>
+      <div class="form-field"><input id="cust-name" type="text" placeholder="Nom complet" /></div>
+      <div class="form-field"><input id="cust-email" type="email" placeholder="Email" /></div>
+      <div class="form-field"><input id="cust-phone" type="text" placeholder="Téléphone" /></div>
+      <div class="form-field"><textarea id="cust-address" rows="3" placeholder="Adresse de livraison"></textarea></div>
+
+      <div style="margin-top:12px;">
+        <button id="confirm-order" class="add-btn">Confirmer la commande</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="container"><p>&copy; 2025 MIRAVA NATURE</p></div>
+</footer>
+
+<script src="products-data.js"></script>
+<script src="cart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const itemsList = document.getElementById('items-list');
+  const subtotalEl = document.getElementById('subtotal');
+  const shippingArea = document.getElementById('shipping-area');
+  const shippingAutomatic = document.getElementById('shipping-automatic');
+  const shippingChoices = document.getElementById('shipping-choices');
+  const shippingAmountEl = document.getElementById('shipping-amount');
+  const grandTotalEl = document.getElementById('grand-total');
+
+  function format(d){ return d + ' DH'; }
+
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  if (cart.length === 0) {
+    itemsList.innerHTML = '<p>Votre panier est vide.</p>';
+    subtotalEl.textContent = '';
+    shippingAutomatic.style.display = 'none';
+    shippingChoices.style.display = 'none';
+    grandTotalEl.textContent = '0 DH';
+    return;
+  }
+
+  // afficher items
+  let subtotal = 0;
+  itemsList.innerHTML = '';
+  cart.forEach(it => {
+    const row = document.createElement('div');
+    row.className = 'summary-row';
+    row.innerHTML = `<div>${it.name} × ${it.qty}</div><div>${(it.price * it.qty)} DH</div>`;
+    itemsList.appendChild(row);
+    subtotal += (it.price || 0) * (it.qty || 0);
+  });
+  subtotalEl.textContent = format(subtotal);
+
+  const threshold = 500;
+  if (subtotal >= threshold) {
+    // livraison gratuite
+    shippingAutomatic.style.display = 'block';
+    shippingChoices.style.display = 'none';
+    shippingAmountEl.textContent = '0 DH';
+    updateGrandTotal(0);
+  } else {
+    // proposer choix
+    shippingAutomatic.style.display = 'none';
+    shippingChoices.style.display = 'block';
+    // préférer Hors Rabat par défaut (30)
+    const radios = document.getElementsByName('shipping');
+    radios.forEach(r => r.checked = false);
+    radios[0].checked = true;
+    updateShippingFromChoice();
+    radios.forEach(r => r.addEventListener('change', updateShippingFromChoice));
+  }
+
+  function updateShippingFromChoice(){
+    const radios = document.getElementsByName('shipping');
+    let fee = 0;
+    for (const r of radios) { if (r.checked) { fee = parseFloat(r.value); break; } }
+    shippingAmountEl.textContent = format(fee);
+    updateGrandTotal(fee);
+  }
+
+  function updateGrandTotal(shippingFee){
+    const gt = subtotal + (shippingFee || 0);
+    grandTotalEl.textContent = format(gt);
+  }
+
+  // confirme la commande
+  document.getElementById('confirm-order').addEventListener('click', async () => {
+    const nom = document.getElementById('cust-name').value.trim();
+    const email = document.getElementById('cust-email').value.trim();
+    const phone = document.getElementById('cust-phone').value.trim();
+    const adresse = document.getElementById('cust-address').value.trim();
+    if (!nom || !email || !phone || !adresse) { alert('Veuillez remplir tous les champs.'); return; }
+
+    let shippingFee = 0;
+    if (subtotal >= threshold) shippingFee = 0;
+    else {
+      const sel = document.querySelector('input[name="shipping"]:checked');
+      shippingFee = sel ? parseFloat(sel.value) : 30;
+    }
+
+    const total = subtotal + shippingFee;
+    const payload = {
+      nom, email, telephone: phone, adresse, modePaiement: 'livraison',
+      produits: cart, total, frais_livraison: shippingFee
+    };
+
+    try {
+      const res = await fetch(`${location.protocol}//${location.host}/api/commandes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data && data.success) {
+        alert('Commande enregistrée. Merci !');
+        localStorage.removeItem('cart');
+        if (typeof window.updateCartUI === 'function') window.updateCartUI();
+        location.href = 'confirmation.html';
+      } else {
+        alert('Erreur lors de la commande : ' + (data.message || JSON.stringify(data)));
+      }
+    } catch (err) {
+      alert('Erreur réseau : ' + err.message);
+    }
+  });
+});
+</script>
+</body>
+</html>

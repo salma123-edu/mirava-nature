@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Détail produit - MIRAVA NATURE</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .product-detail { max-width: 1000px; margin: 40px auto; display:flex; gap:40px; padding:0 20px; align-items:flex-start; }
+    .product-media img { width:420px; max-width:100%; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.08); }
+    .product-info { flex:1; }
+    .price { font-size:24px; color:#8b734a; font-weight:700; margin:10px 0; }
+    .qty { display:flex; gap:8px; align-items:center; margin:12px 0; }
+    .qty button { padding:6px 10px; border-radius:6px; border:1px solid #ddd; background:#fff; cursor:pointer; }
+    .add-btn { background:#4b6e4f; color:#fff; border:none; padding:12px 18px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .add-btn:disabled { opacity:0.6; cursor:not-allowed; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="acceuil.html"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
+    <nav>
+      <a href="acceuil.html">Accueil</a>
+      <a href="products.html">Produits</a>
+      <a href="kits.html">Coffrets</a>
+      <a href="contact.html">Contact</a>
+      <div class="cart-container">
+        <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
+        <div id="mini-cart" class="mini-cart">
+          <h4>Votre panier</h4>
+          <div id="mini-cart-items"></div>
+          <p id="mini-cart-total"></p>
+          <a href="panier.html" class="btn-mini-cart">Voir le panier</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="product-detail" id="product-detail"></section>
+</main>
+
+<footer>
+  <div class="container"><p>&copy; 2025 MIRAVA NATURE</p></div>
+</footer>
+
+<script src="products-data.js"></script>
+<script src="cart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  const container = document.getElementById('product-detail');
+  if (!id || typeof allProducts === 'undefined') {
+    container.innerHTML = '<p>Produit introuvable.</p>';
+    return;
+  }
+  const product = allProducts[id] || Object.values(allProducts).find(p => p.id === id);
+  if (!product) {
+    container.innerHTML = '<p>Produit introuvable.</p>';
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="product-media">
+      <img src="${product.image}" alt="${product.name}" />
+    </div>
+    <div class="product-info">
+      <h1>${product.name}</h1>
+      <p class="short-desc">${product.short_description || ''}</p>
+      <p class="price">${product.price} MAD</p>
+      <p class="long-desc">${product.long_description || product.description || ''}</p>
+
+      <div class="qty">
+        <label>Quantité :</label>
+        <button id="dec">-</button>
+        <input id="qty" type="number" value="1" min="1" style="width:60px;padding:6px;border-radius:6px;border:1px solid #ddd;text-align:center" />
+        <button id="inc">+</button>
+      </div>
+
+      <div>
+        <button id="add-to-cart" class="add-btn">+ Ajouter au panier</button>
+      </div>
+    </div>
+  `;
+
+  const qtyInput = document.getElementById('qty');
+  const incBtn = document.getElementById('inc');
+  const decBtn = document.getElementById('dec');
+  const addBtn = document.getElementById('add-to-cart');
+
+  incBtn.addEventListener('click', () => qtyInput.value = Math.max(1, parseInt(qtyInput.value || '1') + 1));
+  decBtn.addEventListener('click', () => qtyInput.value = Math.max(1, parseInt(qtyInput.value || '1') - 1));
+
+  // afficher compteur actuel
+  if (typeof window.updateCartUI === 'function') window.updateCartUI();
+
+  addBtn.addEventListener('click', (e) => {
+    const qty = Math.max(1, parseInt(qtyInput.value || '1'));
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existing = cart.find(item => item.id === product.id);
+    if (existing) existing.qty = (existing.qty||0) + qty;
+    else cart.push({ id: product.id, name: product.name, price: parseFloat(product.price), qty });
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    const totalQty = cart.reduce((s,i) => s + (i.qty||0), 0);
+    const countElem = document.getElementById('cart-count');
+    if (countElem) countElem.textContent = totalQty;
+    if (typeof window.updateCartUI === 'function') window.updateCartUI();
+
+    const btn = e.currentTarget;
+    btn.textContent = '✅ Ajouté';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = '+ Ajouter au panier'; btn.disabled = false; }, 1000);
+  });
+});
+</script>
+</body>
+</html>
