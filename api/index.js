@@ -49,7 +49,8 @@ function protect(req, res, next) {
         const bearer = bearerHeader.split(' ');
         const bearerToken = bearer[1];
 
-        jwt.verify(bearerToken, process.env.JWT_SECRET, (err, authData) => {
+        const secret = process.env.JWT_SECRET || 'fallback_secret_key_12345';
+        jwt.verify(bearerToken, secret, (err, authData) => {
             if (err) {
                 res.sendStatus(403); // Forbidden
             } else {
