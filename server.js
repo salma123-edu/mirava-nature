@@ -28,7 +28,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes pour gérer les données
 app.get('/', (req, res) => {
     // renvoie la page d'accueil si présente
-    res.sendFile(path.join(__dirname, 'acceuil.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // --- AUTHENTIFICATION ---
