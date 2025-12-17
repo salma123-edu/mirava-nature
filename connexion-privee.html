@@ -79,7 +79,7 @@
                 if (result.success) {
                     // Stocker le token et rediriger vers l'admin
                     localStorage.setItem('authToken', result.token);
-                    window.location.href = 'admin.html';
+                    window.location.href = 'dashboard-secr.html';
                 } else {
                     errorMessage.textContent = result.message || 'Identifiants incorrects.';
                     errorMessage.style.display = 'block';
@@ -92,7 +92,7 @@
 
         // Si l'utilisateur est déjà connecté, le rediriger
         if (localStorage.getItem('authToken')) {
-            window.location.href = 'admin.html';
+            window.location.href = 'dashboard-secr.html';
         }
     </script>
 
