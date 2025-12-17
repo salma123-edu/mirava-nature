@@ -1,70 +1,72 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panier - MIRAVA NATURE</title>
   <link rel="stylesheet" href="css/style.css" />
- 
+
 </head>
+
 <body>
 
-<header>
-  <div class="container">
-    <a href="acceuil.html"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
-    <nav>
-      <a href="acceuil.html">Accueil</a>
-      <a href="products.html">Produits</a>
-      <a href="kits.html">Coffrets</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-  </div>
-</header>
+  <header>
+    <div class="container">
+      <a href="index.html"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
+      <nav>
+        <a href="index.html">Accueil</a>
+        <a href="products.html">Produits</a>
+        <a href="kits.html">Coffrets</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-<section>
-  <h2>Votre panier</h2>
-  <div id="cart-items"></div>
-  <p id="total"></p>
-  <button id="clear-cart">🗑️ Vider le panier</button>
-  <button id="checkout-btn">✅ Commander</button>
-</section>
+  <section>
+    <h2>Votre panier</h2>
+    <div id="cart-items"></div>
+    <p id="total"></p>
+    <button id="clear-cart">🗑️ Vider le panier</button>
+    <button id="checkout-btn">✅ Commander</button>
+  </section>
 
-<!-- Suggestions produits (ajouter avant le footer) -->
-<section id="recommended" class="section container" style="margin-top:32px;">
-  <h2 class="section-title">Vous pourriez aussi aimer</h2>
-  <div id="recommended-grid" class="products-grid"></div>
-</section>
+  <!-- Suggestions produits (ajouter avant le footer) -->
+  <section id="recommended" class="section container" style="margin-top:32px;">
+    <h2 class="section-title">Vous pourriez aussi aimer</h2>
+    <div id="recommended-grid" class="products-grid"></div>
+  </section>
 
-<footer>
-  <div class="container">
-    <p>
-      &copy; 2025 MIRAVA NATURE |
-      <a href="https://instagram.com">Instagram</a> |
-      <a href="https://facebook.com">Facebook</a>
-    </p>
-  </div>
-</footer>
+  <footer>
+    <div class="container">
+      <p>
+        &copy; 2025 MIRAVA NATURE |
+        <a href="https://instagram.com">Instagram</a> |
+        <a href="https://facebook.com">Facebook</a>
+      </p>
+    </div>
+  </footer>
 
-<script>
-function updateCartPage() {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const cartItemsElem = document.getElementById("cart-items");
-  const totalElem = document.getElementById("total");
-  cartItemsElem.innerHTML = "";
+  <script>
+    function updateCartPage() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const cartItemsElem = document.getElementById("cart-items");
+      const totalElem = document.getElementById("total");
+      cartItemsElem.innerHTML = "";
 
-  if (cart.length === 0) {
-    cartItemsElem.innerHTML = "<p>Votre panier est vide.</p>";
-    totalElem.textContent = "";
-    return;
-  }
+      if (cart.length === 0) {
+        cartItemsElem.innerHTML = "<p>Votre panier est vide.</p>";
+        totalElem.textContent = "";
+        return;
+      }
 
-  let total = 0;
-  cart.forEach((item, index) => {
-    total += item.price * item.qty;
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price * item.qty;
 
-    const div = document.createElement("div");
-    div.classList.add("cart-item");
-    div.innerHTML = `
+        const div = document.createElement("div");
+        div.classList.add("cart-item");
+        div.innerHTML = `
       <div><strong>${item.name}</strong> - ${item.price} MAD</div>
       <div>
         <button class="qty-btn" data-index="${index}" data-action="minus">-</button>
@@ -73,66 +75,66 @@ function updateCartPage() {
         <button class="remove-btn" data-index="${index}">🗑️</button>
       </div>
     `;
-    cartItemsElem.appendChild(div);
-  });
+        cartItemsElem.appendChild(div);
+      });
 
-  totalElem.textContent = `💰 Total : ${total} MAD`;
-}
+      totalElem.textContent = `💰 Total : ${total} MAD`;
+    }
 
-// Gestion boutons
-document.addEventListener("click", (e) => {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    // Gestion boutons
+    document.addEventListener("click", (e) => {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  if (e.target.classList.contains("qty-btn")) {
-    const index = e.target.dataset.index;
-    const action = e.target.dataset.action;
-    if (action === "plus") cart[index].qty++;
-    if (action === "minus" && cart[index].qty > 1) cart[index].qty--;
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartPage();
-  }
+      if (e.target.classList.contains("qty-btn")) {
+        const index = e.target.dataset.index;
+        const action = e.target.dataset.action;
+        if (action === "plus") cart[index].qty++;
+        if (action === "minus" && cart[index].qty > 1) cart[index].qty--;
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartPage();
+      }
 
-  if (e.target.classList.contains("remove-btn")) {
-    const index = e.target.dataset.index;
-    cart.splice(index, 1);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartPage();
-  }
-});
+      if (e.target.classList.contains("remove-btn")) {
+        const index = e.target.dataset.index;
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartPage();
+      }
+    });
 
-// Vider le panier
-document.getElementById("clear-cart").addEventListener("click", () => {
-  localStorage.removeItem("cart");
-  updateCartPage();
-});
+    // Vider le panier
+    document.getElementById("clear-cart").addEventListener("click", () => {
+      localStorage.removeItem("cart");
+      updateCartPage();
+    });
 
-// Commander
-document.getElementById("checkout-btn").addEventListener("click", () => {
-  window.location.href = "commande.html";
-});
+    // Commander
+    document.getElementById("checkout-btn").addEventListener("click", () => {
+      window.location.href = "commande.html";
+    });
 
-document.addEventListener("DOMContentLoaded", updateCartPage);
-</script>
+    document.addEventListener("DOMContentLoaded", updateCartPage);
+  </script>
 
-<script src="products-data.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  if (typeof allProducts === 'undefined') return;
-  const products = Object.values(allProducts);
-  const maxPick = Math.min(4, products.length);
-  const picks = [];
-  while (picks.length < maxPick) {
-    const p = products[Math.floor(Math.random() * products.length)];
-    if (!picks.find(x => x.id === p.id)) picks.push(p);
-  }
+  <script src="products-data.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof allProducts === 'undefined') return;
+      const products = Object.values(allProducts);
+      const maxPick = Math.min(4, products.length);
+      const picks = [];
+      while (picks.length < maxPick) {
+        const p = products[Math.floor(Math.random() * products.length)];
+        if (!picks.find(x => x.id === p.id)) picks.push(p);
+      }
 
-  const grid = document.getElementById('recommended-grid');
-  if (!grid) return;
+      const grid = document.getElementById('recommended-grid');
+      if (!grid) return;
 
-  picks.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.innerHTML = `
+      picks.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
       <a href="produit-detail.html?id=${encodeURIComponent(p.id)}" class="product-link">
         <img src="${p.image}" alt="${p.name}" class="product-thumb" />
         <div class="body">
@@ -145,27 +147,28 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </a>
     `;
-    grid.appendChild(card);
+        grid.appendChild(card);
 
-    const btn = card.querySelector('.add-to-cart');
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const item = { id: p.id, name: p.name, price: p.price, qty: 1 };
-      if (typeof window.addToCart === 'function') {
-        window.addToCart(item);
-      } else {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const existing = cart.find(i => i.id === item.id);
-        if (existing) existing.qty += 1; else cart.push(item);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        if (typeof window.updateCartUI === 'function') window.updateCartUI();
-      }
-      btn.textContent = '✅';
-      setTimeout(() => btn.textContent = 'Ajouter', 900);
+        const btn = card.querySelector('.add-to-cart');
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const item = { id: p.id, name: p.name, price: p.price, qty: 1 };
+          if (typeof window.addToCart === 'function') {
+            window.addToCart(item);
+          } else {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existing = cart.find(i => i.id === item.id);
+            if (existing) existing.qty += 1; else cart.push(item);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            if (typeof window.updateCartUI === 'function') window.updateCartUI();
+          }
+          btn.textContent = '✅';
+          setTimeout(() => btn.textContent = 'Ajouter', 900);
+        });
+      });
     });
-  });
-});
-</script>
+  </script>
 
 </body>
+
 </html>

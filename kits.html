@@ -1,64 +1,66 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Coffrets - MIRAVA NATURE</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
-<header>
-  <div class="container">
-    <a href="acceuil.html">
-      <img src="images/logo.png" alt="Logo Mirava Nature" />
-    </a>
-    <nav>
-      <a href="acceuil.html">Accueil</a>
-      <a href="products.html">Produits</a>
-      <a href="kits.html">Coffrets</a>
-      <a href="contact.html">Contact</a>
+  <header>
+    <div class="container">
+      <a href="index.html">
+        <img src="images/logo.png" alt="Logo Mirava Nature" />
+      </a>
+      <nav>
+        <a href="index.html">Accueil</a>
+        <a href="products.html">Produits</a>
+        <a href="kits.html">Coffrets</a>
+        <a href="contact.html">Contact</a>
 
-      <div class="cart-container">
-        <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
-        <div id="mini-cart" class="mini-cart">
-          <h4>Votre panier</h4>
-          <div id="mini-cart-items"></div>
-          <p id="mini-cart-total"></p>
-          <a href="panier.html" class="btn-mini-cart">Voir le panier</a>
+        <div class="cart-container">
+          <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
+          <div id="mini-cart" class="mini-cart">
+            <h4>Votre panier</h4>
+            <div id="mini-cart-items"></div>
+            <p id="mini-cart-total"></p>
+            <a href="panier.html" class="btn-mini-cart">Voir le panier</a>
+          </div>
         </div>
-      </div>
-    </nav>
-  </div>
-</header>
+      </nav>
+    </div>
+  </header>
 
-<section id="kits">
-  <div class="container">
-    <h2>Nos coffrets</h2>
-    <div id="kits-grid" class="products-grid"></div>
-  </div>
-</section>
+  <section id="kits">
+    <div class="container">
+      <h2>Nos coffrets</h2>
+      <div id="kits-grid" class="products-grid"></div>
+    </div>
+  </section>
 
-<footer>
-  <div class="container">
-    <p>
-      &copy; 2025 MIRAVA NATURE |
-      <a href="https://instagram.com">Instagram</a> |
-      <a href="https://facebook.com">Facebook</a>
-    </p>
-  </div>
-</footer>
+  <footer>
+    <div class="container">
+      <p>
+        &copy; 2025 MIRAVA NATURE |
+        <a href="https://instagram.com">Instagram</a> |
+        <a href="https://facebook.com">Facebook</a>
+      </p>
+    </div>
+  </footer>
 
-<script src="products-data.js"></script>
-<script src="kits-data.js"></script>
-<script src="cart.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('kits-grid');
-  if (!container) return;
-  Object.values(allKits).forEach(kit => {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.innerHTML = `
+  <script src="products-data.js"></script>
+  <script src="kits-data.js"></script>
+  <script src="cart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('kits-grid');
+      if (!container) return;
+      Object.values(allKits).forEach(kit => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
       <a href="kit-detail.html?id=${encodeURIComponent(kit.id)}" class="product-link">
         <img src="${kit.image}" alt="${kit.name}" class="product-thumb"/>
         <h3>${kit.name}</h3>
@@ -67,105 +69,106 @@ document.addEventListener('DOMContentLoaded', () => {
       </a>
       <button class="add-to-cart" data-name="${kit.name}" data-price="${kit.price}">+ Ajouter au panier</button>
     `;
-    container.appendChild(card);
-    const btn = card.querySelector('.add-to-cart');
-    btn.addEventListener('click', () => {
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const existing = cart.find(i => i.name === kit.name);
-      if (existing) existing.qty += 1;
-      else cart.push({ id: kit.id, name: kit.name, price: kit.price, qty: 1 });
-      localStorage.setItem('cart', JSON.stringify(cart));
-      if (typeof window.updateCartUI === 'function') window.updateCartUI();
-      const countElem = document.getElementById('cart-count');
-      if (countElem) countElem.textContent = cart.reduce((s,i)=>s+(i.qty||0),0);
-      btn.textContent = '✅ Ajouté';
-      setTimeout(()=>btn.textContent = '+ Ajouter au panier',1000);
+        container.appendChild(card);
+        const btn = card.querySelector('.add-to-cart');
+        btn.addEventListener('click', () => {
+          let cart = JSON.parse(localStorage.getItem('cart')) || [];
+          const existing = cart.find(i => i.name === kit.name);
+          if (existing) existing.qty += 1;
+          else cart.push({ id: kit.id, name: kit.name, price: kit.price, qty: 1 });
+          localStorage.setItem('cart', JSON.stringify(cart));
+          if (typeof window.updateCartUI === 'function') window.updateCartUI();
+          const countElem = document.getElementById('cart-count');
+          if (countElem) countElem.textContent = cart.reduce((s, i) => s + (i.qty || 0), 0);
+          btn.textContent = '✅ Ajouté';
+          setTimeout(() => btn.textContent = '+ Ajouter au panier', 1000);
+        });
+      });
     });
-  });
-});
-</script>
+  </script>
 
-<script>
-// --- Ajouter un produit au panier ---
-function addToCart(product) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const existing = cart.find((item) => item.name === product.name);
+  <script>
+    // --- Ajouter un produit au panier ---
+    function addToCart(product) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const existing = cart.find((item) => item.name === product.name);
 
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({ ...product, qty: 1 });
-  }
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
 
-  localStorage.setItem("cart", JSON.stringify(cart));
-  updateCartUI();
-}
-
-// --- Met à jour le mini-panier ---
-function updateCartUI() {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const countElem = document.getElementById("cart-count");
-  const miniCartItems = document.getElementById("mini-cart-items");
-  const miniCartTotal = document.getElementById("mini-cart-total");
-
-  if (!countElem) return;
-
-  let totalQty = 0;
-  let totalPrice = 0;
-  miniCartItems.innerHTML = "";
-
-  cart.forEach((item) => {
-    totalQty += item.qty;
-    totalPrice += item.price * item.qty;
-
-    const div = document.createElement("div");
-    div.classList.add("mini-cart-item");
-    div.innerHTML = `<span>${item.name}</span><span>${item.qty} × ${item.price} MAD</span>`;
-    miniCartItems.appendChild(div);
-  });
-
-  countElem.textContent = totalQty;
-  miniCartTotal.textContent = cart.length
-    ? `Total : ${totalPrice} MAD`
-    : "Panier vide";
-}
-
-// --- Ouverture du mini-panier ---
-document.addEventListener("DOMContentLoaded", () => {
-  const cartToggle = document.getElementById("cart-toggle");
-  const miniCart = document.getElementById("mini-cart");
-
-  // Toggle du panier
-  cartToggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    miniCart.classList.toggle("show");
-  });
-
-  // Ne pas fermer automatiquement
-  document.addEventListener("click", (e) => {
-    if (!miniCart.contains(e.target) && !cartToggle.contains(e.target)) {
-      // miniCart.classList.remove("show");
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartUI();
     }
-  });
 
-  // Boutons "Ajouter au panier"
-  const addBtns = document.querySelectorAll(".add-to-cart");
-  addBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const name = btn.dataset.name;
-      const price = parseFloat(btn.dataset.price);
-      addToCart({ name, price });
+    // --- Met à jour le mini-panier ---
+    function updateCartUI() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const countElem = document.getElementById("cart-count");
+      const miniCartItems = document.getElementById("mini-cart-items");
+      const miniCartTotal = document.getElementById("mini-cart-total");
 
-      btn.textContent = "✅ Ajouté";
-      setTimeout(() => (btn.textContent = "Ajouter au panier"), 1000);
+      if (!countElem) return;
+
+      let totalQty = 0;
+      let totalPrice = 0;
+      miniCartItems.innerHTML = "";
+
+      cart.forEach((item) => {
+        totalQty += item.qty;
+        totalPrice += item.price * item.qty;
+
+        const div = document.createElement("div");
+        div.classList.add("mini-cart-item");
+        div.innerHTML = `<span>${item.name}</span><span>${item.qty} × ${item.price} MAD</span>`;
+        miniCartItems.appendChild(div);
+      });
+
+      countElem.textContent = totalQty;
+      miniCartTotal.textContent = cart.length
+        ? `Total : ${totalPrice} MAD`
+        : "Panier vide";
+    }
+
+    // --- Ouverture du mini-panier ---
+    document.addEventListener("DOMContentLoaded", () => {
+      const cartToggle = document.getElementById("cart-toggle");
+      const miniCart = document.getElementById("mini-cart");
+
+      // Toggle du panier
+      cartToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        miniCart.classList.toggle("show");
+      });
+
+      // Ne pas fermer automatiquement
+      document.addEventListener("click", (e) => {
+        if (!miniCart.contains(e.target) && !cartToggle.contains(e.target)) {
+          // miniCart.classList.remove("show");
+        }
+      });
+
+      // Boutons "Ajouter au panier"
+      const addBtns = document.querySelectorAll(".add-to-cart");
+      addBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const name = btn.dataset.name;
+          const price = parseFloat(btn.dataset.price);
+          addToCart({ name, price });
+
+          btn.textContent = "✅ Ajouté";
+          setTimeout(() => (btn.textContent = "Ajouter au panier"), 1000);
+        });
+      });
+
+      updateCartUI();
     });
-  });
 
-  updateCartUI();
-});
-
-// --- Synchroniser le panier entre les pages ---
-window.addEventListener("storage", updateCartUI);
-</script>
+    // --- Synchroniser le panier entre les pages ---
+    window.addEventListener("storage", updateCartUI);
+  </script>
 </body>
+
 </html>

@@ -1,143 +1,145 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Produits - MIRAVA NATURE</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
-<header>
-  <div class="container">
-    <a href="acceuil.html" class="logo"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
-    <nav>
-      <a href="acceuil.html">Accueil</a>
-      <a href="products.html" class="active">Produits</a>
-      <a href="kits.html">Coffrets</a>
-      <a href="contact.html">Contact</a>
 
-      <div class="cart-container">
-        <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
-        <div id="mini-cart" class="mini-cart" aria-hidden="true">
-          <h4>Votre panier</h4>
-          <div id="mini-cart-items"></div>
-          <p id="mini-cart-total" class="mini-cart-total">Panier vide</p>
-          <a href="panier.html" class="btn-mini-cart">Voir le panier</a>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
+      <nav>
+        <a href="index.html">Accueil</a>
+        <a href="products.html" class="active">Produits</a>
+        <a href="kits.html">Coffrets</a>
+        <a href="contact.html">Contact</a>
+
+        <div class="cart-container">
+          <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
+          <div id="mini-cart" class="mini-cart" aria-hidden="true">
+            <h4>Votre panier</h4>
+            <div id="mini-cart-items"></div>
+            <p id="mini-cart-total" class="mini-cart-total">Panier vide</p>
+            <a href="panier.html" class="btn-mini-cart">Voir le panier</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section id="products" class="products-full">
+    <div class="full-bleed">
+      <div class="container">
+        <h2>Nos produits</h2>
+
+        <!-- Layout: sidebar filtre à gauche + grille à droite -->
+        <div class="products-layout">
+          <aside id="product-filters" class="sidebar">
+            <!-- filtres générés par JS -->
+          </aside>
+
+          <main class="products-main">
+            <div class="products-grid" id="products-grid-container"></div>
+          </main>
         </div>
       </div>
-    </nav>
-  </div>
-</header>
-
-<section id="products" class="products-full">
-  <div class="full-bleed">
-    <div class="container">
-      <h2>Nos produits</h2>
-
-      <!-- Layout: sidebar filtre à gauche + grille à droite -->
-      <div class="products-layout">
-        <aside id="product-filters" class="sidebar">
-          <!-- filtres générés par JS -->
-        </aside>
-
-        <main class="products-main">
-          <div class="products-grid" id="products-grid-container"></div>
-        </main>
-      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer>
-  <div class="container">
-  </div>
-</footer>
+  <footer>
+    <div class="container">
+    </div>
+  </footer>
 
-<script src="products-data.js"></script>
-<script src="cart.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const grid = document.getElementById('products-grid-container');
-  const filtersEl = document.getElementById('product-filters');
-  if (!grid || typeof allProducts === 'undefined') return;
+  <script src="products-data.js"></script>
+  <script src="cart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('products-grid-container');
+      const filtersEl = document.getElementById('product-filters');
+      if (!grid || typeof allProducts === 'undefined') return;
 
-  const products = Object.values(allProducts);
+      const products = Object.values(allProducts);
 
-  // Détecter catégories à partir de product.category ou tags
-  const catsSet = new Set();
-  products.forEach(p => {
-    if (p.category) catsSet.add(String(p.category).trim());
-    if (p.tags && Array.isArray(p.tags)) p.tags.forEach(t => catsSet.add(String(t).trim()));
-  });
+      // Détecter catégories à partir de product.category ou tags
+      const catsSet = new Set();
+      products.forEach(p => {
+        if (p.category) catsSet.add(String(p.category).trim());
+        if (p.tags && Array.isArray(p.tags)) p.tags.forEach(t => catsSet.add(String(t).trim()));
+      });
 
-  // Ordre souhaité / catégories par défaut
-  const preferred = ['Tous','Visage','Lèvres','Corps','Cheveux','Coffrets'];
-  const derived = Array.from(catsSet).filter(c => !preferred.includes(c));
-  const categories = Array.from(new Set([...preferred.filter(Boolean), ...derived])).filter(Boolean);
+      // Ordre souhaité / catégories par défaut
+      const preferred = ['Tous', 'Visage', 'Lèvres', 'Corps', 'Cheveux', 'Coffrets'];
+      const derived = Array.from(catsSet).filter(c => !preferred.includes(c));
+      const categories = Array.from(new Set([...preferred.filter(Boolean), ...derived])).filter(Boolean);
 
-  // Construire UI filtres
-  filtersEl.innerHTML = '<h3>Filtrer les produits</h3><div id="filters-list" class="filters-list"></div>';
-  const list = document.getElementById('filters-list');
-  categories.forEach(cat => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'filter-btn btn-small';
-    btn.textContent = cat;
-    btn.dataset.cat = cat;
-    if (cat === 'Tous') btn.classList.add('active');
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderProducts(cat);
-    });
-    list.appendChild(btn);
-  });
+      // Construire UI filtres
+      filtersEl.innerHTML = '<h3>Filtrer les produits</h3><div id="filters-list" class="filters-list"></div>';
+      const list = document.getElementById('filters-list');
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'filter-btn btn-small';
+        btn.textContent = cat;
+        btn.dataset.cat = cat;
+        if (cat === 'Tous') btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderProducts(cat);
+        });
+        list.appendChild(btn);
+      });
 
-  // barre recherche (optionnelle)
-  const searchWrap = document.createElement('div');
-  searchWrap.className = 'filter-search';
-  searchWrap.innerHTML = '<input id="filter-search-input" type="search" placeholder="Rechercher un produit..." />';
-  filtersEl.insertBefore(searchWrap, list);
-  document.getElementById('filter-search-input').addEventListener('input', (e) => {
-    const active = document.querySelector('.filter-btn.active');
-    renderProducts(active ? active.dataset.cat : 'Tous', e.target.value.trim());
-  });
+      // barre recherche (optionnelle)
+      const searchWrap = document.createElement('div');
+      searchWrap.className = 'filter-search';
+      searchWrap.innerHTML = '<input id="filter-search-input" type="search" placeholder="Rechercher un produit..." />';
+      filtersEl.insertBefore(searchWrap, list);
+      document.getElementById('filter-search-input').addEventListener('input', (e) => {
+        const active = document.querySelector('.filter-btn.active');
+        renderProducts(active ? active.dataset.cat : 'Tous', e.target.value.trim());
+      });
 
-  // Render initial
-  renderProducts('Tous');
+      // Render initial
+      renderProducts('Tous');
 
-  // renderProducts : affiche les cartes
-  function renderProducts(category = 'Tous', query = '') {
-    grid.innerHTML = '';
-    const q = String(query || '').toLowerCase();
+      // renderProducts : affiche les cartes
+      function renderProducts(category = 'Tous', query = '') {
+        grid.innerHTML = '';
+        const q = String(query || '').toLowerCase();
 
-    let filtered = products.filter(p => {
-      // filter by category
-      if (category && category !== 'Tous') {
-        const catLower = String(category).toLowerCase();
-        const matchCategory = (p.category && String(p.category).toLowerCase() === catLower)
-          || (p.tags && p.tags.map(t=>String(t).toLowerCase()).includes(catLower))
-          || (String(p.name||'').toLowerCase().includes(catLower))
-          || (String(p.short_description||'').toLowerCase().includes(catLower));
-        if (!matchCategory) return false;
-      }
-      // filter by search query
-      if (q) {
-        const hay = (String(p.name||'') + ' ' + String(p.short_description||'') + ' ' + (p.category||'')).toLowerCase();
-        return hay.includes(q);
-      }
-      return true;
-    });
+        let filtered = products.filter(p => {
+          // filter by category
+          if (category && category !== 'Tous') {
+            const catLower = String(category).toLowerCase();
+            const matchCategory = (p.category && String(p.category).toLowerCase() === catLower)
+              || (p.tags && p.tags.map(t => String(t).toLowerCase()).includes(catLower))
+              || (String(p.name || '').toLowerCase().includes(catLower))
+              || (String(p.short_description || '').toLowerCase().includes(catLower));
+            if (!matchCategory) return false;
+          }
+          // filter by search query
+          if (q) {
+            const hay = (String(p.name || '') + ' ' + String(p.short_description || '') + ' ' + (p.category || '')).toLowerCase();
+            return hay.includes(q);
+          }
+          return true;
+        });
 
-    if (filtered.length === 0) {
-      grid.innerHTML = '<p class="text-muted">Aucun produit trouvé.</p>';
-      return;
-    }
+        if (filtered.length === 0) {
+          grid.innerHTML = '<p class="text-muted">Aucun produit trouvé.</p>';
+          return;
+        }
 
-    filtered.forEach(product => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      card.innerHTML = `
+        filtered.forEach(product => {
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          card.innerHTML = `
         <a href="produit-detail.html?id=${encodeURIComponent(product.id)}" class="product-link">
           <img src="${product.image || 'images/placeholder.png'}" alt="${product.name}" class="product-thumb" />
           <div class="body">
@@ -150,26 +152,27 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </a>
       `;
-      grid.appendChild(card);
+          grid.appendChild(card);
 
-      const btn = card.querySelector('.add-to-cart');
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const item = { id: btn.dataset.id, name: btn.dataset.name, price: parseFloat(btn.dataset.price||0), qty: 1 };
-        if (typeof window.addToCart === 'function') window.addToCart(item);
-        else {
-          const cart = JSON.parse(localStorage.getItem('cart')) || [];
-          const ex = cart.find(i => i.id === item.id);
-          if (ex) ex.qty += 1; else cart.push(item);
-          localStorage.setItem('cart', JSON.stringify(cart));
-          if (typeof window.updateCartUI === 'function') window.updateCartUI();
-        }
-        btn.textContent = '✅';
-        setTimeout(() => btn.textContent = 'Ajouter', 800);
-      });
+          const btn = card.querySelector('.add-to-cart');
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const item = { id: btn.dataset.id, name: btn.dataset.name, price: parseFloat(btn.dataset.price || 0), qty: 1 };
+            if (typeof window.addToCart === 'function') window.addToCart(item);
+            else {
+              const cart = JSON.parse(localStorage.getItem('cart')) || [];
+              const ex = cart.find(i => i.id === item.id);
+              if (ex) ex.qty += 1; else cart.push(item);
+              localStorage.setItem('cart', JSON.stringify(cart));
+              if (typeof window.updateCartUI === 'function') window.updateCartUI();
+            }
+            btn.textContent = '✅';
+            setTimeout(() => btn.textContent = 'Ajouter', 800);
+          });
+        });
+      }
     });
-  }
-});
-</script>
+  </script>
 </body>
+
 </html>
