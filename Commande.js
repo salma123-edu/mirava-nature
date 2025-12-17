@@ -28,6 +28,10 @@ const CommandeSchema = new Schema({
         qty: Number,
         price: Number
     }],
+    frais_livraison: {
+        type: Number,
+        default: 0
+    },
     total: {
         type: Number,
         required: true

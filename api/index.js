@@ -119,6 +119,7 @@ app.post('/api/commandes', async (req, res) => {
             adresse,
             modePaiement,
             produits,
+            frais_livraison: req.body.frais_livraison || 0,
             total
         });
 
