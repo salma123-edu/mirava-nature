@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Commandes MIRAVA NATURE</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: #f7f4e9;
+            color: #333;
+        }
+
+        section {
+            max-width: 1200px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            color: #8b734a;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #faf6ef;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fffdf9;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .status-select {
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            font-family: inherit;
+        }
+
+        .delete-btn {
+            background: #c94c4c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .details-btn {
+            background: #c94c4c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #a53c3c;
+        }
+
+        /* Styles pour les filtres */
+        .filters {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: #8b734a;
+            color: white;
+            border-color: #8b734a;
+        }
+
+        /* Styles pour la pagination */
+        .pagination {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-btn {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .page-btn.active {
+            background: #8b734a;
+            color: white;
+            border-color: #8b734a;
+        }
+
+        /* Styles pour la recherche */
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #search-form {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        #search-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 15px;
+        }
+
+        /* Styles pour la modale */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-content h3 {
+            color: #8b734a;
+            margin-bottom: 20px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .details-grid p {
+            margin: 0;
+        }
+
+        .details-grid strong {
+            display: block;
+            color: #8b734a;
+        }
+
+        .print-btn {
+            background-color: #4b6e4f;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+        }
+
+        /* Styles pour les notifications "Toast" */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateX(100%);
+            animation: slideIn 0.5s forwards;
+        }
+
+        .toast.success {
+            background-color: #4b6e4f;
+        }
+
+        .toast.error {
+            background-color: #c94c4c;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <a href="index.html">
+                <img src="images/logo.png" alt="Logo Mirava Nature" />
+            </a>
+            <nav>
+                <a href="index.html">Accueil</a>
+                <a href="products.html">Produits</a>
+                <a href="logout.html" id="logout-btn" style="color: #c94c4c;">Déconnexion</a>
+                <a href="admin.html"><b>Administration</b></a>
+            </nav>
+        </div>
+    </header>
+
+    <section>
+        <h2>📋 Liste des commandes</h2>
+        <div class="search-container">
+            <form id="search-form">
+                <input type="search" id="search-input" placeholder="Rechercher par nom ou email...">
+            </form>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-status="">Toutes</button>
+            <button class="filter-btn" data-status="En attente">En attente</button>
+            <button class="filter-btn" data-status="En cours de préparation">En préparation</button>
+            <button class="filter-btn" data-status="Expédiée">Expédiée</button>
+            <button class="filter-btn" data-status="Annulée">Annulée</button>
+        </div>
+
+        <table id="orders-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Client</th>
+                    <th>Contact</th>
+                    <th>Produits</th>
+                    <th>Total</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="orders-tbody">
+                <!-- Les commandes seront insérées ici par JavaScript -->
+            </tbody>
+        </table>
+
+        <div class="pagination" id="pagination-controls">
+            <!-- Les contrôles de pagination seront insérés ici -->
+        </div>
+
+        <!-- Modale pour les détails de la commande -->
+        <div id="details-modal" class="modal-overlay">
+            <div class="modal-content">
+                <button id="modal-close-btn" class="modal-close">&times;</button>
+                <h3>Détails de la commande</h3>
+                <div id="modal-body">
+                    <!-- Les détails seront insérés ici -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Conteneur pour les notifications Toast -->
+    <div id="toast-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = 'connexion-privee.html'; // Si pas de token, redirection vers la connexion
+                return;
+            }
+
+            let allFetchedCommands = []; // Pour stocker les commandes de la page actuelle
+
+            // --- Fonction pour afficher les notifications "Toast" ---
+            const showToast = (message, type = 'success') => {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                container.appendChild(toast);
+                setTimeout(() => { toast.remove(); }, 4000);
+            };
+
+            // --- Gestion de la modale ---
+            const modal = document.getElementById('details-modal');
+            const closeModalBtn = document.getElementById('modal-close-btn');
+            closeModalBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+            window.addEventListener('click', (event) => {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // --- Fonction pour créer les boutons de pagination ---
+            const renderPagination = (totalPages, currentPage) => {
+                const paginationContainer = document.getElementById('pagination-controls');
+                paginationContainer.innerHTML = '';
+                if (totalPages <= 1) return;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = i;
+                    pageBtn.classList.add('page-btn');
+                    if (i === currentPage) pageBtn.classList.add('active');
+                    pageBtn.addEventListener('click', () => {
+                        const search = document.getElementById('search-input').value;
+                        const activeFilter = document.querySelector('.filters .filter-btn.active').dataset.status;
+                        fetchAndDisplayOrders(activeFilter, i, search);
+                    });
+                    paginationContainer.appendChild(pageBtn);
+                }
+            };
+
+            // --- Fonction principale pour charger et afficher les commandes ---
+            const fetchAndDisplayOrders = async (status = '', page = 1, search = '') => {
+                const tbody = document.getElementById('orders-tbody');
+                tbody.innerHTML = '<tr><td colspan="7" class="loading">Chargement des commandes...</td></tr>';
+
+                try {
+                    const url = new URL('/api/commandes', window.location.origin);
+                    if (status) url.searchParams.append('statut', status);
+                    if (search) url.searchParams.append('search', search);
+                    url.searchParams.append('page', page);
+
+                    const response = await fetch(url, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (response.status === 403 || response.status === 401) {
+                        showToast("Session expirée. Veuillez vous reconnecter.", "error");
+                        localStorage.removeItem('authToken');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        allFetchedCommands = result.data; // Stocker les commandes
+                        tbody.innerHTML = ''; // Vider le tableau
+
+                        if (result.data.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="7" class="loading">Aucune commande trouvée.</td></tr>';
+                        } else {
+                            result.data.forEach(commande => {
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
+                            <td>${new Date(commande.dateCommande).toLocaleDateString()}</td>
+                            <td>${commande.nom}</td>
+                            <td>${commande.email}<br>${commande.telephone}</td>
+                            <td>
+                                <ul>
+                                    ${commande.produits.map(p => `<li>${p.name} (x${p.qty})</li>`).join('')}
+                                </ul>
+                            </td>
+                            <td>${commande.total} MAD</td>
+                            <td>
+                                <select class="status-select" data-id="${commande._id}">
+                                    <option value="En attente" ${commande.statut === 'En attente' ? 'selected' : ''}>En attente</option>
+                                    <option value="En cours de préparation" ${commande.statut === 'En cours de préparation' ? 'selected' : ''}>En préparation</option>
+                                    <option value="Expédiée" ${commande.statut === 'Expédiée' ? 'selected' : ''}>Expédiée</option>
+                                    <option value="Annulée" ${commande.statut === 'Annulée' ? 'selected' : ''}>Annulée</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="details-btn" data-id="${commande._id}">Détails</button>
+                                <button class="delete-btn" data-id="${commande._id}">Supprimer</button>
+                            </td>
+                        `;
+                                tbody.appendChild(tr);
+                            });
+                        }
+                        renderPagination(result.pagination.totalPages, result.pagination.page);
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="7" class="loading" style="color: red;">${result.message}</td></tr>`;
+                    }
+                } catch (error) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="loading" style="color: red;">Erreur de connexion au serveur.</td></tr>';
+                }
+            };
+
+            // --- Gestion des événements ---
+
+            // Filtres
+            document.querySelectorAll('.filters .filter-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelector('.filters .filter-btn.active').classList.remove('active');
+                    button.classList.add('active');
+                    const status = button.dataset.status;
+                    const search = document.getElementById('search-input').value;
+                    fetchAndDisplayOrders(status, 1, search);
+                });
+            });
+
+            // Recherche
+            document.getElementById('search-form').addEventListener('submit', (e) => e.preventDefault());
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const search = e.target.value;
+                const activeFilter = document.querySelector('.filters .filter-btn.active').dataset.status;
+                fetchAndDisplayOrders(activeFilter, 1, search);
+            });
+
+            // Actions sur le tableau (Détails, Suppression, Statut)
+            document.getElementById('orders-table').addEventListener('click', async (e) => {
+                // Bouton Détails
+                if (e.target.classList.contains('details-btn')) {
+                    const commandeId = e.target.dataset.id;
+                    const commande = allFetchedCommands.find(c => c._id === commandeId);
+                    if (!commande) return;
+
+                    const modalBody = document.getElementById('modal-body');
+                    modalBody.innerHTML = `
+                <div class="details-grid">
+                    <p><strong>Client:</strong> ${commande.nom}</p>
+                    <p><strong>Email:</strong> ${commande.email}</p>
+                    <p><strong>Téléphone:</strong> ${commande.telephone}</p>
+                    <p><strong>Adresse:</strong> ${commande.adresse}</p>
+                </div>
+                <h3>Produits</h3>
+                <ul>${commande.produits.map(p => `<li>${p.name} (x${p.qty}) - ${p.price} MAD</li>`).join('')}</ul>
+                <p><strong>Total: ${commande.total} MAD</strong></p>
+                <button class="print-btn" onclick="window.print()">Imprimer</button>
+            `;
+                    modal.style.display = 'flex';
+                }
+
+                // Bouton Supprimer
+                if (e.target.classList.contains('delete-btn')) {
+                    const commandeId = e.target.dataset.id;
+                    if (confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
+                        try {
+                            const response = await fetch(`http://localhost:5000/api/commandes/${commandeId}`, {
+                                method: 'DELETE',
+                                headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            const result = await response.json();
+                            if (result.success) {
+                                showToast('Commande supprimée avec succès !');
+                                fetchAndDisplayOrders(); // Recharger
+                            } else {
+                                showToast(`Erreur : ${result.message}`, 'error');
+                            }
+                        } catch (error) {
+                            showToast('Erreur de connexion lors de la suppression.', 'error');
+                        }
+                    }
+                }
+            });
+
+            // Changement de statut
+            document.getElementById('orders-table').addEventListener('change', async (e) => {
+                if (e.target.classList.contains('status-select')) {
+                    const select = e.target;
+                    const commandeId = select.dataset.id;
+                    const nouveauStatut = select.value;
+
+                    try {
+                        const response = await fetch(`http://localhost:5000/api/commandes/${commandeId}/statut`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ statut: nouveauStatut })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            showToast('Statut mis à jour !');
+                        } else {
+                            showToast(`Erreur : ${result.message}`, 'error');
+                        }
+                    } catch (error) {
+                        showToast('Erreur de connexion lors de la mise à jour.', 'error');
+                    }
+                }
+            });
+
+            // --- Chargement initial ---
+            fetchAndDisplayOrders();
+        });
+    </script>
+
+</body>
+
+</html>

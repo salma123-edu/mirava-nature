@@ -219,9 +219,11 @@
   </header>
 
   <section class="hero">
-    <h2>Bienvenue chez MIRAVA NATURE 🌿</h2>
-    <p>Des soins artisanaux, 100% naturels, pour sublimer votre beauté au quotidien.</p>
-    <a href="products.html" class="btn">Découvrir nos produits</a>
+    <div class="hero-content">
+      <h2>Bienvenue chez MIRAVA NATURE 🌿</h2>
+      <p>Des soins artisanaux, 100% naturels, pour sublimer votre beauté au quotidien.</p>
+      <a href="products.html" class="btn">Découvrir nos produits</a>
+    </div>
   </section>
 
   <section id="presentation">
@@ -250,21 +252,10 @@
   <section id="about">
     <div class="container">
       <h2>Notre histoire</h2>
-      <p>
+      <p style="text-align: center; max-width: 800px; margin: 0 auto;">
         MIRAVA NATURE est née de la passion pour les cosmétiques naturels et artisanaux.
         Nous croyons en la beauté saine et respectueuse de votre peau.
       </p>
-
-      <h2>Nos valeurs</h2>
-      <ul>
-        <li>100 % naturel et fait main</li>
-        <li>Respect de l’environnement et durabilité</li>
-        <li>Qualité premium accessible</li>
-      </ul>
-
-      <h2>Notre atelier</h2>
-      <p>Chaque produit est préparé avec soin dans notre atelier marocain, en utilisant uniquement des ingrédients de
-        qualité, locaux et bio lorsque possible.</p>
     </div>
   </section>
 
@@ -272,13 +263,13 @@
   <footer>
     <div class="container">
       <p>&copy; 2025 MIRAVA NATURE |
-        <a href="https://instagram.com">Instagram</a> |
-        <a href="https://facebook.com">Facebook</a>
+        <a href="#">Conditions Générales</a>
       </p>
     </div>
   </footer>
 
   <script src="js/cart.js"></script>
+  <script src="js/animations.js"></script> <!-- Animation Script -->
 
   <!-- ==================== SCRIPT DU PANIER ==================== -->
   <script>
@@ -301,6 +292,9 @@
 
         const div = document.createElement("div");
         div.classList.add("mini-cart-item");
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.marginBottom = "10px";
         div.innerHTML = `<span>${item.name}</span><span>${item.qty} × ${item.price} MAD</span>`;
         miniCartItems.appendChild(div);
       });
@@ -336,38 +330,6 @@
     // --- Synchronise le panier entre les pages ---
     window.addEventListener("storage", updateCartUI);
   </script>
-
-  <script>
-    (function () {
-      function updatePromoBar() {
-        const target = document.getElementById('promo-text');
-        const action = document.getElementById('promo-action');
-        if (!target) return;
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const total = cart.reduce((s, i) => s + ((i.price || 0) * (i.qty || 0)), 0);
-        const threshold = 500;
-        if (total >= threshold) {
-          target.textContent = `Félicitations — livraison gratuite ! Total panier : ${total} DH`;
-          action.style.display = 'inline-block';
-        } else {
-          const remaining = Math.max(0, threshold - total);
-          target.textContent = `Si vous avez ${threshold} DH d'achat, vous aurez la livraison gratuite. Il vous manque ${remaining} DH.`;
-          action.style.display = 'none';
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        const action = document.getElementById('promo-action');
-        if (action) action.addEventListener('click', () => location.href = 'panier.html');
-        updatePromoBar();
-      });
-
-      // mise à jour si le panier change dans un autre onglet
-      window.addEventListener('storage', updatePromoBar);
-    })();
-  </script>
-
-  <!-- Remplace le script dynamique précédent par ce petit script -->
   <script>
     (function () {
       // Message global affiché dans la barre promo
