@@ -25,8 +25,11 @@ async function connectToDatabase() {
         return cachedDb;
     }
     console.log("Connexion à MongoDB...");
+    const fallbackUri = "mongodb+srv://salma:salma2004@cluster0.8owrk9t.mongodb.net/?appName=Cluster0";
+    const uri = process.env.MONGO_URI || fallbackUri;
+
     try {
-        const db = await mongoose.connect(process.env.MONGO_URI, {
+        const db = await mongoose.connect(uri, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
@@ -168,6 +171,7 @@ app.post('/api/commandes', async (req, res) => {
 // Route pour supprimer une commande par son ID
 app.delete('/api/commandes/:id', protect, async (req, res) => {
     try {
+        await connectToDatabase();
         const { id } = req.params;
 
         // Vérifier si l'ID est valide pour MongoDB
@@ -190,6 +194,7 @@ app.delete('/api/commandes/:id', protect, async (req, res) => {
 // Route pour modifier le statut d'une commande
 app.patch('/api/commandes/:id/statut', protect, async (req, res) => {
     try {
+        await connectToDatabase();
         const { id } = req.params;
         const { statut } = req.body;
 
