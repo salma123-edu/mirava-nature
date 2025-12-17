@@ -284,7 +284,6 @@
                 <a href="index.html">Accueil</a>
                 <a href="products.html">Produits</a>
                 <a href="logout.html" id="logout-btn" style="color: #c94c4c;">Déconnexion</a>
-                <a href="admin.html"><b>Administration</b></a>
             </nav>
         </div>
     </header>
@@ -410,7 +409,7 @@
                     if (response.status === 403 || response.status === 401) {
                         showToast(`Erreur d'authentification (${response.status}) - Token invalide`, "error");
                         console.log("Auth failed", response.status);
-                        // window.location.href = 'connexion-privee.html'; // DESACTIVE POUR DEBUG
+                        window.location.href = 'connexion-privee.html';
                         return;
                     }
 
