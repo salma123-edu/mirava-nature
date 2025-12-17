@@ -89,15 +89,17 @@ function protect(req, res, next) {
 // Route pour récupérer toutes les commandes
 app.get('/api/commandes', protect, async (req, res) => {
     try {
+        await connectToDatabase(); // Connexion DB garantie
+
         const { statut, search, page = 1, limit = 10 } = req.query; // Récupère le statut, la recherche et la pagination
         const filter = {};
-
+        // ... rest of the code is unchanged until the catch block
         if (statut) {
-            filter.statut = statut; // Ajoute le statut au filtre s'il est fourni
+            filter.statut = statut;
         }
 
         if (search) {
-            const searchRegex = new RegExp(search, 'i'); // 'i' pour insensible à la casse
+            const searchRegex = new RegExp(search, 'i');
             filter.$or = [
                 { nom: { $regex: searchRegex } },
                 { email: { $regex: searchRegex } }
@@ -110,11 +112,9 @@ app.get('/api/commandes', protect, async (req, res) => {
             sort: { dateCommande: -1 }
         };
 
-        // Compter le nombre total de documents avec le filtre
         const totalOrders = await Commande.countDocuments(filter);
         const totalPages = Math.ceil(totalOrders / options.limit);
 
-        // Récupérer toutes les commandes de la base de données, triées par date (la plus récente en premier)
         const commandes = await Commande.find(filter)
             .sort(options.sort)
             .skip((options.page - 1) * options.limit)
@@ -122,6 +122,7 @@ app.get('/api/commandes', protect, async (req, res) => {
 
         res.status(200).json({ success: true, data: commandes, pagination: { page: options.page, totalPages, totalOrders } });
     } catch (error) {
+        console.error("Erreur GET commandes:", error);
         res.status(500).json({ success: false, message: "Erreur lors de la récupération des commandes.", error: error.message });
     }
 });
