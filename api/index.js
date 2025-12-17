@@ -5,8 +5,8 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const path = require('path'); // <-- ajouté
 // Importer le modèle de commande
-const Commande = require('./Commande.js');
-const Contact = require('./contact.js'); // <--- ajout
+const Commande = require('../Commande.js');
+const Contact = require('../contact.js'); // <--- ajout
 
 require('dotenv').config();
 
@@ -17,19 +17,10 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Servir les fichiers statiques du dossier actuel
-app.use(express.static(path.join(__dirname)));
-
 // Connexion à MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB connecté"))
     .catch(err => console.log(err));
-
-// Routes pour gérer les données
-app.get('/', (req, res) => {
-    // renvoie la page d'accueil si présente
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
 
 // --- AUTHENTIFICATION ---
 
