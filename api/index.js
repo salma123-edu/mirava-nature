@@ -34,12 +34,14 @@ async function connectToDatabase() {
         }
     }
 
-    // URI local par défaut
+    // Recherche de l'URI dans les variables d'environnement (supporte MONGO_URI et MONGODB_URI)
     const localUri = "mongodb://localhost:27017/mirava_nature";
-    const uri = process.env.MONGO_URI || localUri;
+    const uri = process.env.MONGO_URI || process.env.MONGODB_URI || localUri;
 
     const isLocal = uri === localUri;
-    console.log(`Tentative de connexion MongoDB (${isLocal ? 'LOCALE' : 'DISTANTE'})...`);
+    // Masquage du mot de passe pour les logs
+    const maskedUri = uri.replace(/\/\/([^:]+):([^@]+)@/, "// $1:****@");
+    console.log(`Tentative de connexion MongoDB (${isLocal ? 'LOCALE' : 'DISTANTE'}) : ${maskedUri}`);
 
     // On stocke la promesse de connexion pour éviter des appels multiples
     cachedConnection = mongoose.connect(uri, {
