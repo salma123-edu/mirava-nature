@@ -18,26 +18,42 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Variable pour le cache de la connexion (Vercel Serverless behavior)
-let cachedDb = null;
+let cachedConnection = null;
 
 async function connectToDatabase() {
-    if (cachedDb && mongoose.connection.readyState === 1) {
-        return cachedDb;
+    if (mongoose.connection.readyState === 1) {
+        return mongoose.connection;
     }
 
-    // URI de secours (Atlas Cloud)
-    const atlasUri = "mongodb+srv://admin:admin123@cluster0.8owrk9t.mongodb.net/?appName=Cluster0";
-    const uri = process.env.MONGO_URI || atlasUri;
+    if (cachedConnection) {
+        try {
+            await cachedConnection;
+            return mongoose.connection;
+        } catch (e) {
+            cachedConnection = null;
+        }
+    }
 
-    console.log("Tentative de connexion MongoDB (v2.2)...");
+    // URI local par défaut
+    const localUri = "mongodb://localhost:27017/mirava_nature";
+    const uri = process.env.MONGO_URI || localUri;
+
+    const isLocal = uri === localUri;
+    console.log(`Tentative de connexion MongoDB (${isLocal ? 'LOCALE' : 'DISTANTE'})...`);
+
+    // On stocke la promesse de connexion pour éviter des appels multiples
+    cachedConnection = mongoose.connect(uri, {
+        serverSelectionTimeoutMS: 5000, // Échoue après 5s si le serveur est injoignable
+        bufferCommands: false, // Désactive le buffering pour avoir des erreurs immédiates si non connecté
+    });
 
     try {
-        const db = await mongoose.connect(uri);
-        cachedDb = db;
-        console.log("DB Connectée avec succès (v2.2)");
-        return db;
+        await cachedConnection;
+        console.log(`DB ${isLocal ? 'LOCALE' : 'DISTANTE'} connectée avec succès`);
+        return mongoose.connection;
     } catch (error) {
-        console.error("ÉCHEC Connexion MongoDB (v2.2):", error.message);
+        cachedConnection = null;
+        console.error(`ÉCHEC Connexion MongoDB (${isLocal ? 'LOCALE' : 'DISTANTE'}):`, error.message);
         throw error;
     }
 }

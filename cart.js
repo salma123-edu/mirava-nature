@@ -123,7 +123,7 @@ function initCheckoutButton() {
     );
 
     try {
-      const res = await fetch("http://localhost:5000/api/commandes", {
+      const res = await fetch("/api/commandes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

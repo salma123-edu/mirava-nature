@@ -9,7 +9,7 @@ form.addEventListener('submit', async (e) => {
         message: form.message.value
     };
 
-    const res = await fetch('http://localhost:5000/api/contact', {
+    const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
