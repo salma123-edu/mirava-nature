@@ -606,6 +606,39 @@ section {
     margin-bottom: 40px;
 }
 
+/* --- ENGAGEMENTS SECTION --- */
+.engagements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-top: 50px;
+}
+
+.engagement-card {
+    text-align: center;
+    padding: 30px;
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.engagement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.engagement-card h3 {
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+    color: var(--primary);
+}
+
+.engagement-card p {
+    color: var(--text-muted);
+}
+
 /* --- ABOUT PAGE --- */
 .about-content {
     max-width: 800px;

@@ -5,58 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Administration</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f7f4e9;
-        }
-
-        section {
-            max-width: 400px;
-            width: 100%;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        input {
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
-
-        button {
-            padding: 12px;
-            font-size: 16px;
-        }
-
-        .error-message {
-            color: #c94c4c;
-            text-align: center;
-            display: none;
-            margin-top: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css?v=3.3">
 </head>
 
 <body>
 
-    <section>
-        <h2>🔒 Accès Administration</h2>
-        <form id="login-form">
-            <input type="text" id="username" placeholder="Nom d'utilisateur" required>
-            <input type="password" id="password" placeholder="Mot de passe" required>
-            <button type="submit">Se connecter</button>
-        </form>
-        <p id="error-message" class="error-message"></p>
+    <section class="auth-page">
+        <div class="auth-container">
+            <h2>🔒 Accès Administration</h2>
+            <p>Espace réservé au personnel autorisé</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn-premium" style="width: 100%;">Se connecter</button>
+            </form>
+            <p id="error-message" class="error-msg" style="margin-top: 20px;"></p>
+        </div>
     </section>
 
     <script>
