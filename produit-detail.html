@@ -5,71 +5,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Détail produit - MIRAVA NATURE</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <style>
-    .product-detail {
-      max-width: 1000px;
-      margin: 40px auto;
-      display: flex;
-      gap: 40px;
-      padding: 0 20px;
-      align-items: flex-start;
-    }
-
-    .product-media img {
-      width: 420px;
-      max-width: 100%;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    .product-info {
-      flex: 1;
-    }
-
-    .price {
-      font-size: 24px;
-      color: #8b734a;
-      font-weight: 700;
-      margin: 10px 0;
-    }
-
-    .qty {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin: 12px 0;
-    }
-
-    .qty button {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      background: #fff;
-      cursor: pointer;
-    }
-
-    .add-btn {
-      background: #4b6e4f;
-      color: #fff;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .add-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  </style>
+  <link rel="stylesheet" href="css/style.css?v=3.1" />
 </head>
 
 <body>
   <header>
     <div class="container">
-      <a href="index.html"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
+      <a href="index.html">
+        <img src="images/logo.png" alt="Logo Mirava Nature" />
+      </a>
+      <button class="mobile-menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <nav>
         <a href="index.html">Accueil</a>
         <a href="products.html">Produits</a>
@@ -89,8 +38,8 @@
     </div>
   </header>
 
-  <main>
-    <section class="product-detail" id="product-detail"></section>
+  <main style="padding-top: 60px;">
+    <section class="container" id="product-detail"></section>
   </main>
 
   <footer>
@@ -100,6 +49,7 @@
   </footer>
 
   <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
   <script src="js/cart.js"></script>
   <script src="products-data.js"></script>
   <script>
@@ -118,27 +68,30 @@
       }
 
       container.innerHTML = `
-    <div class="product-media">
-      <img src="${product.image}" alt="${product.name}" />
-    </div>
-    <div class="product-info">
-      <h1>${product.name}</h1>
-      <p class="short-desc">${product.short_description || ''}</p>
-      <p class="price">${product.price} MAD</p>
-      <p class="long-desc">${product.long_description || product.description || ''}</p>
+        <div class="detail-layout">
+          <div class="product-media">
+            <img src="${product.image}" alt="${product.name}" class="detail-img" />
+          </div>
+          <div class="detail-info">
+            <h1>${product.name}</h1>
+            <p class="price detail-price">${product.price} MAD</p>
+            <p class="detail-desc">${product.long_description || product.description || ''}</p>
 
-      <div class="qty">
-        <label>Quantité :</label>
-        <button id="dec">-</button>
-        <input id="qty" type="number" value="1" min="1" style="width:60px;padding:6px;border-radius:6px;border:1px solid #ddd;text-align:center" />
-        <button id="inc">+</button>
-      </div>
+            <div class="form-group" style="max-width: 200px;">
+              <label>Quantité :</label>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <button id="dec" class="qty-btn" style="width: 40px; height: 40px;">-</button>
+                <input id="qty" type="number" value="1" min="1" style="width: 60px; text-align: center; border: 1px solid #eee; border-radius: 8px; padding: 10px;" />
+                <button id="inc" class="qty-btn" style="width: 40px; height: 40px;">+</button>
+              </div>
+            </div>
 
-      <div>
-        <button id="add-to-cart-btn" class="add-btn">+ Ajouter au panier</button>
-      </div>
-    </div>
-  `;
+            <div style="margin-top: 30px;">
+              <button id="add-to-cart-btn" class="btn-premium" style="width: 100%;">Ajouter au panier</button>
+            </div>
+          </div>
+        </div>
+      `;
 
       const qtyInput = document.getElementById('qty');
       const incBtn = document.getElementById('inc');
@@ -151,11 +104,18 @@
       addBtn.addEventListener('click', (e) => {
         const qty = Math.max(1, parseInt(qtyInput.value || '1'));
         if (typeof window.addToCart === 'function') {
-          window.addToCart({ id: product.id, name: product.name, price: parseFloat(product.price), qty: qty });
+          window.addToCart({ id: product.id, name: product.name, price: parseFloat(product.price), qty: qty, image: product.image });
         }
-        addBtn.textContent = '✅ Ajouté';
+        addBtn.textContent = '✅ Ajouté au panier';
+        addBtn.classList.remove('btn-premium');
+        addBtn.style.background = '#2D4F3C';
         addBtn.disabled = true;
-        setTimeout(() => { addBtn.textContent = '+ Ajouter au panier'; addBtn.disabled = false; }, 1000);
+        setTimeout(() => {
+          addBtn.textContent = 'Ajouter au panier';
+          addBtn.classList.add('btn-premium');
+          addBtn.style.background = '';
+          addBtn.disabled = false;
+        }, 1500);
       });
     });
   </script>

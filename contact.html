@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact - MIRAVA NATURE</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=3.1" />
 </head>
 
 <body>
@@ -14,6 +14,11 @@
       <a href="index.html">
         <img src="images/logo.png" alt="Logo Mirava Nature" />
       </a>
+      <button class="mobile-menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <nav>
         <a href="index.html">Accueil</a>
         <a href="products.html">Produits</a>
@@ -34,21 +39,41 @@
     </div>
   </header>
 
-  <section id="contact">
+  <div class="page-header">
     <div class="container">
-      <h2>Contact / Précommande</h2>
-      <p>Pour toute question ou précommande, remplissez le formulaire ci-dessous :</p>
-      <form action="#" method="POST">
-        <input type="text" name="name" placeholder="Votre nom" required />
-        <input type="email" name="email" placeholder="Votre email" required />
-        <textarea name="message" placeholder="Votre message / commande" required></textarea>
-        <button type="submit">Envoyer</button>
-      </form>
-      <p>Ou contactez-nous via nos réseaux sociaux :</p>
-      <p>
-        <a href="https://instagram.com">Instagram</a> |
-        <a href="https://facebook.com">Facebook</a>
-      </p>
+      <h1>Contactez-nous</h1>
+      <p>Une question ? Une envie de tester nos produits ? Nous sommes à votre écoute.</p>
+    </div>
+  </div>
+
+  <section id="contact" style="padding-top: 0;">
+    <div class="container">
+      <div class="contact-container">
+        <h2 class="section-title">Formulaire de Contact</h2>
+        <form action="#" method="POST" class="contact-form">
+          <div class="form-group">
+            <label>Votre nom</label>
+            <input type="text" name="name" placeholder="Salma El ..." required />
+          </div>
+          <div class="form-group">
+            <label>Votre email</label>
+            <input type="email" name="email" placeholder="votre@email.com" required />
+          </div>
+          <div class="form-group">
+            <label>Votre message / commande</label>
+            <textarea name="message" placeholder="Dites-nous tout..." rows="5" required></textarea>
+          </div>
+          <button type="submit" class="btn-premium">Envoyer le message</button>
+        </form>
+
+        <div class="contact-info-footer">
+          <p>Ou contactez-nous via nos réseaux sociaux :</p>
+          <div class="social-links">
+            <a href="https://instagram.com">Instagram</a>
+            <a href="https://facebook.com">Facebook</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -63,6 +88,7 @@
   </footer>
 
   <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
   <script src="js/cart.js"></script>
 </body>
 

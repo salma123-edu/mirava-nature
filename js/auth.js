@@ -112,10 +112,10 @@ const auth = {
         if (authContainer.innerHTML.trim() === "") {
             authContainer.innerHTML = `
                 <a href="login.html" id="nav-login-btn">Connexion</a>
-                <a href="register.html" id="nav-register-btn" class="cart-btn" 
-                   style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; margin-left:10px;">S'inscrire</a>
+                <a href="register.html" id="nav-register-btn" class="btn-premium" 
+                   style="padding: 5px 15px; font-size: 13px; margin-left:10px;">S'inscrire</a>
                 <span id="nav-user-greeting" style="display:none; color: var(--primary); font-weight: 600; margin-right:10px;"></span>
-                <a href="#" id="nav-logout-btn" style="display:none; color: #c94c4c;">Déconnexion</a>
+                <a href="#" id="nav-logout-btn" style="display:none; color: #c94c4c; font-size: 13px;">Déconnexion</a>
             `;
         }
 

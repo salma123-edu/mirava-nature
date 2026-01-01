@@ -5,188 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Accueil - MIRAVA NATURE</title>
-  <link rel="stylesheet" href="css/style.css">
-  <style>
-    /* --- Styles généraux améliorés --- */
-    :root {
-      --primary-color: #8b734a;
-      /* Brun doux */
-      --secondary-color: #4b6e4f;
-      /* Vert nature */
-    }
-
-    /* --- Animation douce du mini-panier --- */
-    .mini-cart {
-      position: absolute;
-      right: 0;
-      top: 50px;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 15px;
-      width: 250px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      display: none;
-      opacity: 0;
-      transform: translateY(-10px);
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-
-    .mini-cart.show {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .cart-container {
-      position: relative;
-      display: inline-block;
-    }
-
-    .cart-btn {
-      background: #4b6e4f;
-      color: #fff;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .cart-btn:hover {
-      background: #7aa883;
-    }
-
-    .mini-cart-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    .btn-mini-cart {
-      display: block;
-      text-align: center;
-      background: #4b6e4f;
-      color: #fff;
-      padding: 8px;
-      border-radius: 5px;
-      text-decoration: none;
-      margin-top: 10px;
-      transition: background 0.3s;
-    }
-
-    .btn-mini-cart:hover {
-      background: #7aa883;
-    }
-
-    /* --- Nouvelle section Hero --- */
-    .hero {
-      background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://via.placeholder.com/1500x600.png/f7f4e9/8b734a?text=Image+de+vos+produits');
-      background-size: cover;
-      background-position: center;
-      color: white;
-      text-align: center;
-      padding: 120px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hero h2 {
-      font-size: 42px;
-      margin-bottom: 15px;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-    }
-
-    .hero p {
-      font-size: 18px;
-      max-width: 600px;
-      margin-bottom: 30px;
-    }
-
-    .hero .btn {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 15px 30px;
-      border-radius: 30px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .hero .btn:hover {
-      background-color: white;
-      color: var(--primary-color);
-      transform: translateY(-3px);
-    }
-
-    /* --- Nouvelle section de présentation --- */
-    #presentation {
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    #presentation h2 {
-      font-size: 32px;
-      color: var(--primary-color);
-      margin-bottom: 40px;
-    }
-
-    .engagements-grid {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-    }
-
-    .engagement-card {
-      background: white;
-      border-radius: 16px;
-      padding: 30px;
-      width: 300px;
-      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.07);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .engagement-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .engagement-card h3 {
-      font-size: 22px;
-      color: var(--secondary-color);
-    }
-
-    /* Promo bar en haut de la page */
-    .promo-bar {
-      background: #f6f3e9;
-      color: #2e3a2b;
-      padding: 10px 16px;
-      text-align: center;
-      font-weight: 700;
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      align-items: center;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .promo-bar .promo-cta {
-      background: #4b6e4f;
-      color: #fff;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-  </style>
+  <link rel="stylesheet" href="css/style.css?v=3.1">
 </head>
 
 <body>
@@ -199,6 +18,11 @@
       <a href="index.html">
         <img src="images/logo.png" alt="Logo Mirava Nature" />
       </a>
+      <button class="mobile-menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <nav>
         <a href="index.html" class="active">Accueil</a>
         <a href="products.html">Produits</a>
@@ -221,9 +45,7 @@
 
   <section class="hero">
     <div class="hero-content">
-      <h2>Bienvenue chez MIRAVA NATURE 🌿</h2>
-      <p>Des soins artisanaux, 100% naturels, pour sublimer votre beauté au quotidien.</p>
-      <a href="products.html" class="btn">Découvrir nos produits</a>
+      <a href="products.html" class="btn-premium">Découvrir nos produits</a>
     </div>
   </section>
 
@@ -271,6 +93,7 @@
   </footer>
 
   <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/animations.js"></script> <!-- Animation Script -->
 

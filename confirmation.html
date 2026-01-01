@@ -5,86 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commande Confirmée - MIRAVA NATURE</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .confirmation-container {
-            max-width: 600px;
-            margin: 100px auto;
-            text-align: center;
-            padding: 40px 20px;
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(45, 79, 60, 0.05);
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .success-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            margin: 0 auto 30px;
-            box-shadow: 0 8px 20px rgba(45, 79, 60, 0.2);
-        }
-
-        .confirmation-container h1 {
-            font-size: 32px;
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-
-        .confirmation-container p {
-            color: var(--text-muted);
-            font-size: 18px;
-            margin-bottom: 35px;
-            line-height: 1.6;
-        }
-
-        .order-id {
-            display: inline-block;
-            padding: 8px 16px;
-            background: #f0f4f1;
-            border-radius: 30px;
-            color: var(--primary-light);
-            font-weight: 600;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .btn-home {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 16px 40px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(45, 79, 60, 0.15);
-        }
-
-        .btn-home:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(45, 79, 60, 0.25);
-            background: var(--primary-light);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css?v=3.1" />
 </head>
 
 <body>
@@ -93,6 +14,11 @@
             <a href="index.html">
                 <img src="images/logo.png" alt="Logo Mirava Nature" />
             </a>
+            <button class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <nav>
                 <a href="index.html">Accueil</a>
                 <a href="products.html">Produits</a>
@@ -112,7 +38,7 @@
             <div class="order-id">PRÉPARATION EN COURS 🌿</div>
 
             <div>
-                <a href="index.html" class="btn-home">Retour à l'accueil</a>
+                <a href="index.html" class="btn-premium">Retour à l'accueil</a>
             </div>
         </div>
     </main>
@@ -123,6 +49,9 @@
         </div>
     </footer>
 
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
     <script>
         // Vider le panier après confirmation au cas où ce n'est pas fait (par sécurité)
         localStorage.removeItem('cart');

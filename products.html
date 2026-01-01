@@ -5,13 +5,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Produits - MIRAVA NATURE</title>
-  <link rel="stylesheet" href="css/style.css?v=2.0" />
+  <link rel="stylesheet" href="css/style.css?v=3.1" />
 </head>
 
 <body>
   <header>
     <div class="container">
-      <a href="index.html" class="logo"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
+      <a href="index.html">
+        <img src="images/logo.png" alt="Logo Mirava Nature" />
+      </a>
+      <button class="mobile-menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <nav>
         <a href="index.html">Accueil</a>
         <a href="products.html" class="active">Produits</a>
@@ -58,6 +65,7 @@
 
   <script src="products-data.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
   <script src="js/cart.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -149,7 +157,7 @@
             <p class="short-desc">${product.short_description || ''}</p>
             <div class="actions" style="display:flex;justify-content:space-between;align-items:center">
               <span class="price">${product.price} MAD</span>
-              <button class="add-to-cart btn-small" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}">Ajouter</button>
+              <button class="btn-premium btn-small add-to-cart" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}">Ajouter</button>
             </div>
           </div>
         </a>

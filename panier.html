@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panier - MIRAVA NATURE</title>
-  <link rel="stylesheet" href="css/style.css?v=2.0" />
+  <link rel="stylesheet" href="css/style.css?v=3.1" />
 
 </head>
 
@@ -14,6 +14,11 @@
   <header>
     <div class="container">
       <a href="index.html"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
+      <button class="mobile-menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <nav>
         <a href="index.html">Accueil</a>
         <a href="products.html">Produits</a>
@@ -30,16 +35,27 @@
     </div>
   </header>
 
-  <section>
-    <h2>Votre panier</h2>
-    <div id="cart-items"></div>
-    <p id="total"></p>
-    <button id="clear-cart">🗑️ Vider le panier</button>
-    <button id="checkout-btn">✅ Commander</button>
+  <div class="page-header">
+    <div class="container">
+      <h1>Votre Panier</h1>
+      <p>Vérifiez vos articles avant de passer à la caisse.</p>
+    </div>
+  </div>
+
+  <section class="container" style="padding-top: 0;">
+    <div id="cart-items" class="cart-table"></div>
+
+    <div class="cart-summary-footer">
+      <div class="cart-total-price" id="total">Total : 0 MAD</div>
+      <div style="display: flex; gap: 15px;">
+        <button id="clear-cart" class="btn-outline">🗑️ Vider</button>
+        <button id="checkout-btn" class="btn-premium">Passer la commande</button>
+      </div>
+    </div>
   </section>
 
-  <!-- Suggestions produits (ajouter avant le footer) -->
-  <section id="recommended" class="section container" style="margin-top:32px;">
+  <!-- Suggestions produits -->
+  <section id="recommended" class="container">
     <h2 class="section-title">Vous pourriez aussi aimer</h2>
     <div id="recommended-grid" class="products-grid"></div>
   </section>
@@ -74,13 +90,17 @@
         const div = document.createElement("div");
         div.classList.add("cart-item");
         div.innerHTML = `
-      <div><strong>${item.name}</strong> - ${item.price} MAD</div>
-      <div>
+      <img src="${item.image || 'images/placeholder.png'}" alt="${item.name}">
+      <div class="cart-item-info">
+        <h4>${item.name}</h4>
+        <p class="price">${item.price} MAD</p>
+      </div>
+      <div class="cart-item-qty">
         <button class="qty-btn" data-index="${index}" data-action="minus">-</button>
         <span>${item.qty}</span>
         <button class="qty-btn" data-index="${index}" data-action="plus">+</button>
-        <button class="remove-btn" data-index="${index}">🗑️</button>
       </div>
+      <button class="remove-btn" data-index="${index}" style="cursor: pointer;">&times;</button>
     `;
         cartItemsElem.appendChild(div);
       });
@@ -115,6 +135,9 @@
       updateCartPage();
     });
 
+    document.getElementById("checkout-btn").addEventListener("click", () => {
+      window.location.href = "commande.html";
+    });
 
     document.addEventListener("DOMContentLoaded", updateCartPage);
   </script>
@@ -145,7 +168,7 @@
           <p class="short-desc">${p.short_description || ''}</p>
           <div class="actions" style="justify-content:space-between;align-items:center">
             <span class="price">${p.price} MAD</span>
-            <button class="add-to-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}">Ajouter</button>
+            <button class="btn-premium add-to-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}">Ajouter</button>
           </div>
         </div>
       </a>
@@ -173,6 +196,7 @@
   </script>
 
   <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
   <script src="js/cart.js"></script>
 </body>
 
