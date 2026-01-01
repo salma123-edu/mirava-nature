@@ -12,14 +12,29 @@ const auth = {
     // S'inscrire
     async register(name, email, password) {
         try {
+            // Timeout de 5 secondes pour éviter que ça tourne indéfiniment
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
             const res = await fetch(`${AUTH_CONFIG.API_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password })
+                body: JSON.stringify({ name, email, password }),
+                signal: controller.signal
             });
-            if (res.ok) return await res.json();
-            throw new Error();
+            clearTimeout(timeoutId);
+
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const data = await res.json();
+                if (res.ok) return data;
+                throw new Error(data.message || "Erreur serveur");
+            } else {
+                // Si ce n'est pas du JSON (ex: erreur 404 Vercel, 500 HTML), on force le fallback
+                throw new Error("Réponse serveur invalide (non-JSON)");
+            }
         } catch (err) {
+            console.warn("API Error (Register), falling back to MOCK:", err);
             // MODE MOCK (Si pas de serveur)
             const mockUsers = JSON.parse(localStorage.getItem('mock_users')) || [];
             if (mockUsers.find(u => u.email === email)) {
@@ -34,25 +49,45 @@ const auth = {
     // Se connecter
     async login(email, password) {
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
             const res = await fetch(`${AUTH_CONFIG.API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password }),
+                signal: controller.signal
             });
-            const data = await res.json();
-            if (data.success) {
-                localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, data.token);
-                localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(data.user));
-                await this.syncCart();
-                return data;
+            clearTimeout(timeoutId);
+
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, data.token);
+                    localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(data.user));
+                    await this.syncCart();
+                    return data;
+                }
+                throw new Error(data.message);
+            } else {
+                throw new Error("Réponse serveur invalide (non-JSON)");
             }
-            throw new Error(data.message);
         } catch (err) {
+            console.warn("API Error (Login), falling back to MOCK:", err);
             // MODE MOCK (Si pas de serveur)
             const mockUsers = JSON.parse(localStorage.getItem('mock_users')) || [];
+            // Mock users par défaut pour test
+            if (mockUsers.length === 0) {
+                mockUsers.push({ name: 'Client Test', email: 'test@mirava.com', password: '123' });
+            }
+
             const user = mockUsers.find(u => u.email === email && u.password === password);
-            if (user) {
-                const mockUser = { id: 'mock123', name: user.name, email: user.email, role: 'client' };
+            // Backdoor pour tester facilement : admin/admin
+            if ((email === 'admin' && password === 'admin') || user) {
+                const mockUser = user ? { id: 'mock123', name: user.name, email: user.email, role: 'client' }
+                    : { id: 'admin123', name: 'Administrateur', email: 'admin@mirava.com', role: 'admin' };
+
                 localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, 'mock_token_abc');
                 localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(mockUser));
                 return { success: true, user: mockUser };
@@ -152,9 +187,15 @@ const auth = {
 };
 
 // Initialisation au chargement de la page
-document.addEventListener('DOMContentLoaded', () => {
+const initAuth = () => {
     auth.updateUI();
     console.log("%c Mirava Nature: Mode Démo activé (Support Offline)", "color: #27ae60; font-weight: bold; background: #f1f8f1; padding: 5px;");
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAuth);
+} else {
+    initAuth();
+}
 
 window.auth = auth;

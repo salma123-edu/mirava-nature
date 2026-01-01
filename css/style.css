@@ -406,6 +406,27 @@ nav a.active {
     font-weight: 600;
 }
 
+.error-msg,
+.success-msg {
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.error-msg {
+    background: #fdf2f2;
+    color: #c94c4c;
+    border: 1px solid #fbd5d5;
+}
+
+.success-msg {
+    background: #f3faf7;
+    color: #27ae60;
+    border: 1px solid #def7ec;
+}
+
 /* --- CHECKOUT / COMMANDE --- */
 .checkout-layout {
     display: grid;

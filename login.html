@@ -59,19 +59,33 @@
     <script>
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = "Connexion...";
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const errorEl = document.getElementById('error-msg');
 
-            const res = await auth.login(email, password);
-            if (res.success) {
-                // Rediriger vers la page d'accueil ou le panier s'il venait de là
-                const urlParams = new URLSearchParams(window.location.search);
-                const redirect = urlParams.get('redirect') || 'index.html';
-                window.location.href = redirect;
-            } else {
-                errorEl.textContent = res.message;
+            try {
+                const res = await auth.login(email, password);
+                if (res.success) {
+                    // Rediriger vers la page d'accueil ou le panier s'il venait de là
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirect = urlParams.get('redirect') || 'index.html';
+                    window.location.href = redirect;
+                } else {
+                    errorEl.textContent = res.message;
+                    errorEl.style.display = 'block';
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            } catch (err) {
+                errorEl.textContent = "Une erreur est survenue.";
                 errorEl.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = originalText;
             }
         });
     </script>

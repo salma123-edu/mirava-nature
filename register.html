@@ -35,7 +35,7 @@
             <form id="register-form">
                 <div class="form-group">
                     <label for="name">Nom Complet</label>
-                    <input type="text" id="name" placeholder="Salma El ..." required>
+                    <input type="text" id="name" placeholder="Votre Nom Complet" required>
                 </div>
                 <div class="form-group">
                     <label for="email">E-mail</label>
@@ -64,24 +64,39 @@
     <script>
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = "Création...";
+
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const errorEl = document.getElementById('error-msg');
             const successEl = document.getElementById('success-msg');
 
-            const res = await auth.register(name, email, password);
-            if (res.success) {
-                successEl.textContent = res.message;
-                successEl.style.display = 'block';
-                errorEl.style.display = 'none';
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
-            } else {
-                errorEl.textContent = res.message;
+            try {
+                const res = await auth.register(name, email, password);
+                if (res.success) {
+                    successEl.textContent = res.message;
+                    successEl.style.display = 'block';
+                    errorEl.style.display = 'none';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    errorEl.textContent = res.message;
+                    errorEl.style.display = 'block';
+                    successEl.style.display = 'none';
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            } catch (err) {
+                errorEl.textContent = "Une erreur est survenue.";
                 errorEl.style.display = 'block';
                 successEl.style.display = 'none';
+                btn.disabled = false;
+                btn.textContent = originalText;
             }
         });
     </script>
