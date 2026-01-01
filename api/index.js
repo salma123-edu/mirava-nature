@@ -11,11 +11,16 @@ const Contact = require('../contact.js'); // <--- ajout
 require('dotenv').config();
 
 const app = express();
+const bcrypt = require('bcryptjs');
+const User = require('../models/User'); // <-- ajouté
 const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+// Servir les fichiers statiques (HTML, CSS, JS, etc.)
+app.use(express.static(path.join(__dirname, '..')));
 
 // Variable pour le cache de la connexion (Vercel Serverless behavior)
 let cachedConnection = null;
@@ -65,21 +70,116 @@ connectToDatabase().catch(err => console.error("Initial connection failed:", err
 
 // --- AUTHENTIFICATION ---
 
-// Route de connexion
-app.post('/api/auth/login', (req, res) => {
-    const { username, password } = req.body;
+app.post('/api/auth/login', async (req, res) => {
+    const { username, email, password } = req.body;
 
-    // Fallback aux identifiants par défaut si les variables d'env ne sont pas définies sur Vercel
-    const validUser = process.env.ADMIN_USERNAME || 'admin';
-    const validPass = process.env.ADMIN_PASSWORD || 'salma2004';
+    // --- LOGIN ADMIN (username) ---
+    if (username) {
+        const validUser = process.env.ADMIN_USERNAME || 'admin';
+        const validPass = process.env.ADMIN_PASSWORD || 'salma2004';
 
-    if (username === validUser && password === validPass) {
-        // Créer un token
-        const secret = 'super_secret_mirava_2025';
-        const token = jwt.sign({ username: username }, secret, { expiresIn: '8h' });
-        res.json({ success: true, token: token });
-    } else {
-        res.status(401).json({ success: false, message: "Identifiants incorrects" });
+        if (username === validUser && password === validPass) {
+            const secret = 'super_secret_mirava_2025';
+            const token = jwt.sign({ username: username, role: 'admin' }, secret, { expiresIn: '8h' });
+            return res.json({ success: true, token: token, role: 'admin' });
+        }
+    }
+
+    // --- LOGIN CLIENT (email) ---
+    if (email) {
+        try {
+            await connectToDatabase();
+            const user = await User.findOne({ email });
+            if (!user) {
+                return res.status(401).json({ success: false, message: "Utilisateur non trouvé" });
+            }
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(401).json({ success: false, message: "Mot de passe incorrect" });
+            }
+
+            const secret = 'super_secret_mirava_2025';
+            const token = jwt.sign({ userId: user._id, role: user.role }, secret, { expiresIn: '24h' });
+            return res.json({
+                success: true,
+                token: token,
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                }
+            });
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Erreur serveur", error: error.message });
+        }
+    }
+
+    res.status(401).json({ success: false, message: "Identifiants incorrects" });
+});
+
+// Route d'inscription
+app.post('/api/auth/register', async (req, res) => {
+    const { name, email, password } = req.body;
+    try {
+        await connectToDatabase();
+
+        // Vérifier si l'utilisateur existe déjà
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: "Cet e-mail est déjà utilisé." });
+        }
+
+        // Hasher le mot de passe
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword
+        });
+
+        await newUser.save();
+        res.status(201).json({ success: true, message: "Compte créé avec succès ! Connectez-vous maintenant." });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Erreur lors de l'inscription.", error: error.message });
+    }
+});
+
+// Route pour récupérer les infos de l'utilisateur connecté
+app.get('/api/auth/me', protect, async (req, res) => {
+    try {
+        await connectToDatabase();
+        // Si c'est l'admin (basé sur le token username)
+        if (req.authData.username === 'admin') {
+            return res.json({ success: true, user: { name: 'Administrateur', role: 'admin' } });
+        }
+
+        const user = await User.findById(req.authData.userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ success: false, message: "Utilisateur non trouvé" });
+        }
+        res.json({ success: true, user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Erreur serveur", error: error.message });
+    }
+});
+
+// Route pour synchroniser le panier
+app.post('/api/auth/cart', protect, async (req, res) => {
+    const { cart } = req.body;
+    try {
+        await connectToDatabase();
+        if (req.authData.role === 'admin') {
+            return res.status(403).json({ success: false, message: "L'admin n'a pas de panier." });
+        }
+
+        await User.findByIdAndUpdate(req.authData.userId, { cart: cart });
+        res.json({ success: true, message: "Panier synchronisé." });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Erreur de synchronisation", error: error.message });
     }
 });
 
@@ -175,7 +275,8 @@ app.post('/api/commandes', async (req, res) => {
         console.log("Commande OK (v2.2) ID:", commandeSauvegardee._id);
         res.status(201).json({
             success: true,
-            version: "2.2 (FINAL)",
+            version: "2.3",
+            orderId: commandeSauvegardee._id,
             message: "Commande enregistrée ! 🎉"
         });
     } catch (error) {

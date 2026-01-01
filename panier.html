@@ -19,6 +19,13 @@
         <a href="products.html">Produits</a>
         <a href="kits.html">Coffrets</a>
         <a href="contact.html">Contact</a>
+        <div id="auth-nav-area" class="auth-btn-group">
+          <a href="login.html" id="nav-login-btn">Connexion</a>
+          <a href="register.html" id="nav-register-btn" class="cart-btn"
+            style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px;">S'inscrire</a>
+          <span id="nav-user-greeting" style="display:none; color: var(--primary); font-weight: 600;"></span>
+          <a href="#" id="nav-logout-btn" style="display:none;">Déconnexion</a>
+        </div>
       </nav>
     </div>
   </header>
@@ -108,10 +115,6 @@
       updateCartPage();
     });
 
-    // Commander
-    document.getElementById("checkout-btn").addEventListener("click", () => {
-      window.location.href = "commande.html";
-    });
 
     document.addEventListener("DOMContentLoaded", updateCartPage);
   </script>
@@ -169,6 +172,8 @@
     });
   </script>
 
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
 </body>
 
 </html>

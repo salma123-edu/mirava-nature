@@ -19,6 +19,7 @@
         <a href="products.html">Produits</a>
         <a href="kits.html">Coffrets</a>
         <a href="contact.html">Contact</a>
+        <div id="auth-nav-area" class="auth-btn-group"></div>
 
         <div class="cart-container">
           <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
@@ -61,62 +62,8 @@
     </div>
   </footer>
 
-  <script>
-    // --- Met à jour le compteur et le mini-panier ---
-    function updateCartUI() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const countElem = document.getElementById("cart-count");
-      const miniCartItems = document.getElementById("mini-cart-items");
-      const miniCartTotal = document.getElementById("mini-cart-total");
-
-      if (!countElem) return;
-
-      let totalQty = 0;
-      let totalPrice = 0;
-      miniCartItems.innerHTML = "";
-
-      cart.forEach((item) => {
-        totalQty += item.qty;
-        totalPrice += item.price * item.qty;
-
-        const div = document.createElement("div");
-        div.classList.add("mini-cart-item");
-        div.innerHTML = `<span>${item.name}</span><span>${item.qty} × ${item.price} MAD</span>`;
-        miniCartItems.appendChild(div);
-      });
-
-      countElem.textContent = totalQty;
-      miniCartTotal.textContent = cart.length
-        ? `Total : ${totalPrice} MAD`
-        : "Panier vide";
-    }
-
-    // --- Ouverture et fermeture du mini-panier ---
-    document.addEventListener("DOMContentLoaded", () => {
-      const cartToggle = document.getElementById("cart-toggle");
-      const miniCart = document.getElementById("mini-cart");
-
-      if (!cartToggle || !miniCart) return;
-
-      cartToggle.addEventListener("click", (e) => {
-        e.stopPropagation();
-        miniCart.classList.toggle("show");
-      });
-
-      // Laisse le mini-panier affiché tant que l'utilisateur ne reclique pas
-      document.addEventListener("click", (e) => {
-        if (!miniCart.contains(e.target) && !cartToggle.contains(e.target)) {
-          // On peut commenter la ligne suivante si on veut qu’il reste ouvert :
-          // miniCart.classList.remove("show");
-        }
-      });
-
-      updateCartUI();
-    });
-
-    // --- Synchronise entre les pages ---
-    window.addEventListener("storage", updateCartUI);
-  </script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
 </body>
 
 </html>

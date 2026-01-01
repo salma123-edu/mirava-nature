@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - MIRAVA NATURE</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .auth-container {
+            max-width: 450px;
+            margin: 80px auto;
+            background: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-hover);
+            text-align: center;
+        }
+
+        .auth-container h2 {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .auth-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .auth-footer {
+            margin-top: 25px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .auth-footer a {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .error-msg {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-msg {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html"><img src="images/logo.png" alt="Logo Mirava Nature" /></a>
+            <nav>
+                <a href="index.html">Accueil</a>
+                <a href="products.html">Produits</a>
+                <a href="contact.html">Contact</a>
+                <div id="auth-nav-area" class="auth-btn-group"></div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="auth-container">
+        <h2>Rejoignez la famille Mirava 🌿</h2>
+        <div id="error-msg" class="error-msg"></div>
+        <div id="success-msg" class="success-msg"></div>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="name">Nom Complet</label>
+                <input type="text" id="name" placeholder="Salma El ..." required>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" placeholder="votre@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="auth-btn">Créer mon compte</button>
+        </form>
+        <div class="auth-footer">
+            Déjà un compte ? <a href="login.html">Connectez-vous</a>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MIRAVA NATURE</p>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('error-msg');
+            const successEl = document.getElementById('success-msg');
+
+            const res = await auth.register(name, email, password);
+            if (res.success) {
+                successEl.textContent = res.message;
+                successEl.style.display = 'block';
+                errorEl.style.display = 'none';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else {
+                errorEl.textContent = res.message;
+                errorEl.style.display = 'block';
+                successEl.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

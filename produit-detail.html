@@ -75,6 +75,7 @@
         <a href="products.html">Produits</a>
         <a href="kits.html">Coffrets</a>
         <a href="contact.html">Contact</a>
+        <div id="auth-nav-area"></div>
         <div class="cart-container">
           <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
           <div id="mini-cart" class="mini-cart">
@@ -98,8 +99,9 @@
     </div>
   </footer>
 
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
   <script src="products-data.js"></script>
-  <script src="cart.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(location.search);
@@ -133,7 +135,7 @@
       </div>
 
       <div>
-        <button id="add-to-cart" class="add-btn">+ Ajouter au panier</button>
+        <button id="add-to-cart-btn" class="add-btn">+ Ajouter au panier</button>
       </div>
     </div>
   `;
@@ -141,31 +143,19 @@
       const qtyInput = document.getElementById('qty');
       const incBtn = document.getElementById('inc');
       const decBtn = document.getElementById('dec');
-      const addBtn = document.getElementById('add-to-cart');
+      const addBtn = document.getElementById('add-to-cart-btn');
 
       incBtn.addEventListener('click', () => qtyInput.value = Math.max(1, parseInt(qtyInput.value || '1') + 1));
       decBtn.addEventListener('click', () => qtyInput.value = Math.max(1, parseInt(qtyInput.value || '1') - 1));
 
-      // afficher compteur actuel
-      if (typeof window.updateCartUI === 'function') window.updateCartUI();
-
       addBtn.addEventListener('click', (e) => {
         const qty = Math.max(1, parseInt(qtyInput.value || '1'));
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const existing = cart.find(item => item.id === product.id);
-        if (existing) existing.qty = (existing.qty || 0) + qty;
-        else cart.push({ id: product.id, name: product.name, price: parseFloat(product.price), qty });
-
-        localStorage.setItem('cart', JSON.stringify(cart));
-        const totalQty = cart.reduce((s, i) => s + (i.qty || 0), 0);
-        const countElem = document.getElementById('cart-count');
-        if (countElem) countElem.textContent = totalQty;
-        if (typeof window.updateCartUI === 'function') window.updateCartUI();
-
-        const btn = e.currentTarget;
-        btn.textContent = '✅ Ajouté';
-        btn.disabled = true;
-        setTimeout(() => { btn.textContent = '+ Ajouter au panier'; btn.disabled = false; }, 1000);
+        if (typeof window.addToCart === 'function') {
+          window.addToCart({ id: product.id, name: product.name, price: parseFloat(product.price), qty: qty });
+        }
+        addBtn.textContent = '✅ Ajouté';
+        addBtn.disabled = true;
+        setTimeout(() => { addBtn.textContent = '+ Ajouter au panier'; addBtn.disabled = false; }, 1000);
       });
     });
   </script>

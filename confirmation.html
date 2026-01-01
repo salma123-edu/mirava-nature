@@ -124,8 +124,19 @@
     </footer>
 
     <script>
-        // Vider le panier après confirmation au cas où ce n'est pas fait
+        // Vider le panier après confirmation au cas où ce n'est pas fait (par sécurité)
         localStorage.removeItem('cart');
+
+        // Extraire l'ID de la commande de l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
+        const orderIdDisplay = document.querySelector('.order-id');
+
+        if (orderId) {
+            orderIdDisplay.innerHTML = `COMMANDE : <strong>${orderId}</strong> 🌿`;
+        } else {
+            orderIdDisplay.innerHTML = `PRÉPARATION EN COURS 🌿`;
+        }
     </script>
 </body>
 

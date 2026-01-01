@@ -343,7 +343,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const token = localStorage.getItem('authToken');
+            const token = localStorage.getItem('mirava_token');
             if (!token) {
                 window.location.href = 'connexion-privee.html'; // Si pas de token, redirection vers la connexion
                 return;

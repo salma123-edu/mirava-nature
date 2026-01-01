@@ -78,7 +78,7 @@
 
                 if (result.success) {
                     // Stocker le token et rediriger vers l'admin
-                    localStorage.setItem('authToken', result.token);
+                    localStorage.setItem('mirava_token', result.token);
                     window.location.href = 'dashboard-secr.html';
                 } else {
                     errorMessage.textContent = result.message || 'Identifiants incorrects.';
@@ -91,7 +91,7 @@
         });
 
         // Si l'utilisateur est déjà connecté, le rediriger
-        if (localStorage.getItem('authToken')) {
+        if (localStorage.getItem('mirava_token')) {
             window.location.href = 'dashboard-secr.html';
         }
     </script>

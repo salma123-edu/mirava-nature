@@ -60,6 +60,7 @@
         <a href="products.html">Produits</a>
         <a href="kits.html" class="active">Coffrets</a>
         <a href="contact.html">Contact</a>
+        <div id="auth-nav-area"></div>
         <div class="cart-container">
           <button id="cart-toggle" class="cart-btn">🛒 Panier (<span id="cart-count">0</span>)</button>
           <div id="mini-cart" class="mini-cart" aria-hidden="true">
@@ -83,9 +84,10 @@
     </div>
   </footer>
 
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
   <script src="products-data.js"></script>
   <script src="kits-data.js"></script>
-  <script src="cart.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(location.search);
@@ -98,7 +100,7 @@
       const kit = allKits[id];
       if (!kit) { container.innerHTML = '<p>Coffret introuvable.</p>'; return; }
 
-      // Construire contenu des produits du coffret (sans bouton "Ajouter" individuel)
+      // Construire contenu des produits du coffret
       const contentsHtml = (kit.contents || []).map(pid => {
         const p = (typeof allProducts !== 'undefined' && allProducts[pid]) ? allProducts[pid] : null;
         const img = p ? p.image : 'images/placeholder.png';
@@ -129,38 +131,19 @@
       </div>
     `;
 
-      // ajout du coffret entier au panier
       const addKitBtn = document.getElementById('add-kit');
       if (addKitBtn) {
         addKitBtn.addEventListener('click', () => {
-          const item = {
-            id: kit.id,
-            name: kit.name,
-            price: kit.price,
-            qty: 1
-          };
+          const item = { id: kit.id, name: kit.name, price: kit.price, qty: 1 };
           if (typeof window.addToCart === 'function') {
             window.addToCart(item);
-          } else {
-            // fallback
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const existing = cart.find(i => i.id === item.id);
-            if (existing) existing.qty += 1; else cart.push(item);
-            localStorage.setItem('cart', JSON.stringify(cart));
-            if (typeof window.updateCartUI === 'function') window.updateCartUI();
           }
           addKitBtn.textContent = '✅ Ajouté';
           setTimeout(() => addKitBtn.textContent = '+ Ajouter le coffret au panier', 900);
         });
       }
-
-      // Aucun bouton "Ajouter" par produit — l'utilisateur ajoute le coffret entier via #add-kit
-
-      // afficher compteur actuel
-      if (typeof window.updateCartUI === 'function') window.updateCartUI();
     });
 
-    // small helper escape (client-side)
     function escapeHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
   </script>
 </body>
