@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test WhatsApp - MIRAVA NATURE</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #25D366;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .info {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #25D366;
+        }
+
+        .info strong {
+            color: #25D366;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .console-log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .console-log div {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📱 Test WhatsApp Integration</h1>
+
+        <div class="info">
+            <strong>Numéro configuré :</strong> <span id="phone-number">Chargement...</span>
+        </div>
+
+        <div class="info">
+            <strong>Status :</strong> <span id="status">Prêt à tester</span>
+        </div>
+
+        <button onclick="testWhatsApp()">🚀 Tester l'envoi WhatsApp</button>
+
+        <div id="result" class="result"></div>
+
+        <div class="console-log" id="console">
+            <div><strong>📋 Console de débogage :</strong></div>
+        </div>
+    </div>
+
+    <script src="js/whatsapp-config.js"></script>
+    <script>
+        const consoleDiv = document.getElementById('console');
+
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            const timestamp = new Date().toLocaleTimeString();
+            const emoji = type === 'error' ? '❌' : type === 'success' ? '✅' : '📝';
+            div.textContent = `[${timestamp}] ${emoji} ${message}`;
+            div.style.color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#d4d4d4';
+            consoleDiv.appendChild(div);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        // Vérifier la configuration au chargement
+        window.addEventListener('DOMContentLoaded', () => {
+            log('Page chargée');
+
+            if (window.WHATSAPP_CONFIG) {
+                const phoneNumber = window.WHATSAPP_CONFIG.businessNumber;
+                document.getElementById('phone-number').textContent = phoneNumber;
+                log(`Configuration trouvée: ${phoneNumber}`, 'success');
+
+                if (phoneNumber === 'YOUR_WHATSAPP_NUMBER') {
+                    document.getElementById('status').textContent = '⚠️ Non configuré';
+                    log('ATTENTION: Numéro WhatsApp non configuré!', 'error');
+                } else {
+                    document.getElementById('status').textContent = '✅ Configuré';
+                    log('Configuration valide', 'success');
+                }
+            } else {
+                document.getElementById('status').textContent = '❌ Erreur';
+                log('ERREUR: Configuration WhatsApp non trouvée!', 'error');
+            }
+        });
+
+        function testWhatsApp() {
+            log('Début du test...');
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'none';
+
+            // Vérifier la configuration
+            if (!window.WHATSAPP_CONFIG) {
+                log('Configuration manquante', 'error');
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Configuration WhatsApp manquante!';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            const phoneNumber = window.WHATSAPP_CONFIG.businessNumber;
+            log(`Numéro: ${phoneNumber}`);
+
+            if (phoneNumber === 'YOUR_WHATSAPP_NUMBER') {
+                log('Numéro non configuré', 'error');
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Veuillez configurer votre numéro WhatsApp dans js/whatsapp-config.js';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            // Créer un message de test
+            const testMessage = `🧪 TEST - MIRAVA NATURE
+
+Ceci est un message de test pour vérifier l'intégration WhatsApp.
+
+📱 Numéro configuré: ${phoneNumber}
+⏰ Date: ${new Date().toLocaleString('fr-FR')}
+
+Si vous recevez ce message, l'intégration fonctionne parfaitement! ✅`;
+
+            log('Message de test créé');
+            log(`Longueur du message: ${testMessage.length} caractères`);
+
+            // Encoder le message
+            const encodedMessage = encodeURIComponent(testMessage);
+            log('Message encodé pour URL');
+
+            // Créer l'URL WhatsApp
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            log(`URL générée: ${whatsappURL.substring(0, 100)}...`);
+
+            try {
+                log('Tentative d\'ouverture de WhatsApp...');
+
+                // Ouvrir WhatsApp
+                const whatsappWindow = window.open(whatsappURL, '_blank');
+
+                if (!whatsappWindow || whatsappWindow.closed || typeof whatsappWindow.closed === 'undefined') {
+                    log('Pop-up bloqué par le navigateur', 'error');
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+            ❌ Le navigateur a bloqué le pop-up!<br><br>
+            <strong>Solution:</strong><br>
+            1. Autorisez les pop-ups pour ce site<br>
+            2. Ou cliquez sur ce lien: <a href="${whatsappURL}" target="_blank" style="color:#25D366;font-weight:bold;">Ouvrir WhatsApp</a>
+          `;
+                    resultDiv.style.display = 'block';
+                } else {
+                    log('WhatsApp ouvert avec succès!', 'success');
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ WhatsApp ouvert! Vérifiez votre application WhatsApp et envoyez le message de test.';
+                    resultDiv.style.display = 'block';
+                }
+            } catch (error) {
+                log(`Erreur: ${error.message}`, 'error');
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+          ❌ Erreur: ${error.message}<br><br>
+          <a href="${whatsappURL}" target="_blank" style="color:#25D366;font-weight:bold;">Cliquez ici pour ouvrir WhatsApp manuellement</a>
+        `;
+                resultDiv.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+
+</html>

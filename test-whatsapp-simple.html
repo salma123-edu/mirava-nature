@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test WhatsApp Simple - MIRAVA NATURE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #25D366;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #25D366;
+        }
+
+        .info-box strong {
+            color: #25D366;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-box span {
+            font-size: 16px;
+            color: #333;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .btn:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-secondary {
+            background: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #5568d3;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .instructions strong {
+            color: #856404;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #28a745;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>📱 Test WhatsApp</h1>
+        <p class="subtitle">MIRAVA NATURE</p>
+
+        <div class="info-box">
+            <strong>Votre numéro WhatsApp :</strong>
+            <span id="phone-display">212642461561</span>
+        </div>
+
+        <a href="https://wa.me/212642461561?text=🧪%20TEST%20-%20MIRAVA%20NATURE%0A%0ACeci%20est%20un%20message%20de%20test%20pour%20vérifier%20l'intégration%20WhatsApp.%0A%0ASi%20vous%20recevez%20ce%20message%2C%20l'intégration%20fonctionne%20parfaitement!%20✅"
+            target="_blank" class="btn" onclick="showSuccess()">
+            🚀 Tester WhatsApp Maintenant
+        </a>
+
+        <button class="btn btn-secondary" onclick="testFullOrder()">
+            🛍️ Tester avec Commande Complète
+        </button>
+
+        <div class="instructions">
+            <strong>📋 Instructions :</strong><br>
+            1. Cliquez sur le bouton vert ci-dessus<br>
+            2. WhatsApp va s'ouvrir avec un message pré-rempli<br>
+            3. Cliquez sur "Envoyer" dans WhatsApp<br>
+            4. Vous recevrez le message sur votre WhatsApp !
+        </div>
+
+        <div class="success" id="success-msg">
+            ✅ <strong>Parfait !</strong> Si WhatsApp s'est ouvert, l'intégration fonctionne correctement !
+        </div>
+    </div>
+
+    <script>
+        function showSuccess() {
+            setTimeout(() => {
+                document.getElementById('success-msg').style.display = 'block';
+            }, 500);
+        }
+
+        function testFullOrder() {
+            const orderMessage = `🛍️ *NOUVELLE COMMANDE - MIRAVA NATURE*
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 *INFORMATIONS CLIENT*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👤 Nom: Test Client
+📧 Email: test@example.com
+📱 Téléphone: 0612345678
+📍 Adresse: 123 Rue Test, Rabat
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🛒 *DÉTAILS DE LA COMMANDE*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Huile d'Argan Bio 50ml
+  Qté: 2 × 150 DH = 300.00 DH
+• Savon Noir Naturel
+  Qté: 1 × 80 DH = 80.00 DH
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 *TOTAUX*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Sous-total: 380.00 DH
+Frais de livraison: 30.00 DH
+─────────────────────────────
+*TOTAL: 410.00 DH*
+
+💳 Mode de paiement: Paiement à la livraison 🚚
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🆔 ID Commande: MN-TEST-12345
+📅 Date: ${new Date().toLocaleString('fr-FR')}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+            const encodedMessage = encodeURIComponent(orderMessage);
+            const whatsappURL = `https://wa.me/212642461561?text=${encodedMessage}`;
+
+            window.open(whatsappURL, '_blank');
+            showSuccess();
+        }
+    </script>
+</body>
+
+</html>

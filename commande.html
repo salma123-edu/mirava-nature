@@ -90,6 +90,7 @@
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
   <script src="js/cart.js"></script>
+  <script src="js/whatsapp-config.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const itemsList = document.getElementById('items-list');
@@ -168,58 +169,154 @@
         grandTotalEl.textContent = format(gt);
       }
 
-      // confirme la commande
+      // Confirmer la commande via WhatsApp
       document.getElementById('confirm-order').addEventListener('click', async () => {
         const nom = document.getElementById('cust-name').value.trim();
         const email = document.getElementById('cust-email').value.trim();
         const phone = document.getElementById('cust-phone').value.trim();
         const adresse = document.getElementById('cust-address').value.trim();
-        if (!nom || !email || !phone || !adresse) { alert('Veuillez remplir tous les champs.'); return; }
 
+        if (!nom || !email || !phone || !adresse) {
+          alert('Veuillez remplir tous les champs.');
+          return;
+        }
+
+        // Vérifier que WhatsApp est configuré
+        if (!window.WHATSAPP_CONFIG ||
+          window.WHATSAPP_CONFIG.businessNumber === 'YOUR_WHATSAPP_NUMBER') {
+          alert('⚠️ WhatsApp n\'est pas encore configuré.\n\nVeuillez mettre à jour votre numéro WhatsApp dans js/whatsapp-config.js');
+          console.error('WhatsApp configuration is missing. Please update js/whatsapp-config.js');
+          return;
+        }
+
+        // Calculer les frais de livraison
         let shippingFee = 0;
-        if (subtotal >= threshold) shippingFee = 0;
-        else {
+        if (subtotal >= threshold) {
+          shippingFee = 0;
+        } else {
           const sel = document.querySelector('input[name="shipping"]:checked');
           shippingFee = sel ? parseFloat(sel.value) : 30;
         }
 
         const total = subtotal + shippingFee;
-        const payload = {
-          nom, email, telephone: phone, adresse, modePaiement: 'livraison',
-          produits: cart, total, frais_livraison: shippingFee
-        };
 
-        try {
-          const headers = { 'Content-Type': 'application/json' };
-          const token = window.auth ? window.auth.getToken() : null;
-          if (token) headers['Authorization'] = `Bearer ${token}`;
+        // Générer un ID de commande unique
+        const orderId = 'MN-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
 
-          const res = await fetch('/api/commandes', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(payload)
-          });
+        // Formater la date
+        const orderDate = new Date().toLocaleString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
 
-          if (res.ok) {
-            const data = await res.json();
-            alert('Commande enregistrée. Merci !');
-            localStorage.removeItem('cart');
-            if (typeof window.updateCartUI === 'function') window.updateCartUI();
-            location.href = `confirmation.html?id=${data.orderId || ''}`;
-          } else {
-            const data = await res.json().catch(() => ({}));
-            throw new Error(data.message || `Erreur serveur (${res.status})`);
+        // Formater la liste des produits pour WhatsApp
+        let productsList = '';
+        cart.forEach(item => {
+          const itemTotal = (item.price * item.qty).toFixed(2);
+          productsList += `• ${item.name}\n  Qté: ${item.qty} × ${item.price} DH = ${itemTotal} DH\n`;
+        });
+
+        // Créer le message WhatsApp
+        const whatsappMessage = `🛍️ *NOUVELLE COMMANDE - MIRAVA NATURE*
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 *INFORMATIONS CLIENT*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👤 Nom: ${nom}
+📧 Email: ${email}
+📱 Téléphone: ${phone}
+📍 Adresse: ${adresse}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🛒 *DÉTAILS DE LA COMMANDE*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${productsList}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 *TOTAUX*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Sous-total: ${subtotal.toFixed(2)} DH
+Frais de livraison: ${shippingFee.toFixed(2)} DH
+─────────────────────────────
+*TOTAL: ${total.toFixed(2)} DH*
+
+💳 Mode de paiement: Paiement à la livraison 🚚
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🆔 ID Commande: ${orderId}
+📅 Date: ${orderDate}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+        // Encoder le message pour l'URL
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+
+        // Créer l'URL WhatsApp
+        const whatsappNumber = window.WHATSAPP_CONFIG.businessNumber;
+        const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+        console.log('📱 WhatsApp URL générée:', whatsappURL);
+        console.log('📱 Numéro WhatsApp:', whatsappNumber);
+        console.log('🔗 URL complète:', whatsappURL.substring(0, 150) + '...');
+
+        // Vider le panier AVANT d'ouvrir WhatsApp
+        localStorage.removeItem('cart');
+        if (typeof window.updateCartUI === 'function') window.updateCartUI();
+        console.log('✅ Panier vidé');
+
+        // Créer une popup visuelle AVANT d'ouvrir WhatsApp
+        const popup = document.createElement('div');
+        popup.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;';
+        popup.innerHTML = `
+          <div style="background:white;padding:40px;border-radius:20px;max-width:500px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+            <div style="font-size:60px;margin-bottom:20px;">📱</div>
+            <h2 style="color:#25D366;margin-bottom:15px;">Commande Préparée !</h2>
+            <p style="margin-bottom:25px;font-size:16px;line-height:1.6;">
+              WhatsApp va s'ouvrir dans un instant avec votre commande pré-remplie.<br>
+              <strong>Cliquez sur "Envoyer"</strong> dans WhatsApp pour finaliser.
+            </p>
+            <div style="background:#f0f9ff;padding:15px;border-radius:10px;margin-bottom:20px;">
+              <strong style="color:#25D366;">ID Commande:</strong><br>
+              <span style="font-family:monospace;font-size:18px;">${orderId}</span>
+            </div>
+            <a href="${whatsappURL}" target="_blank" id="whatsapp-link" style="display:inline-block;background:#25D366;color:white;padding:15px 40px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:18px;margin-bottom:15px;">
+              📱 Ouvrir WhatsApp
+            </a>
+            <p style="font-size:12px;color:#666;margin-top:15px;">
+              Si WhatsApp ne s'ouvre pas automatiquement, cliquez sur le bouton ci-dessus
+            </p>
+          </div>
+        `;
+        document.body.appendChild(popup);
+
+        // Ouvrir WhatsApp automatiquement après un court délai
+        setTimeout(() => {
+          console.log('🚀 Tentative d\'ouverture de WhatsApp...');
+
+          try {
+            const whatsappWindow = window.open(whatsappURL, '_blank');
+
+            if (!whatsappWindow || whatsappWindow.closed || typeof whatsappWindow.closed === 'undefined') {
+              console.warn('⚠️ Pop-up bloqué par le navigateur');
+              // Le bouton manuel est déjà affiché dans la popup
+            } else {
+              console.log('✅ WhatsApp ouvert avec succès!');
+            }
+          } catch (error) {
+            console.error('❌ Erreur:', error);
+            // Le bouton manuel est déjà affiché dans la popup
           }
-        } catch (err) {
-          console.warn("Échec de la requête API, passage en mode MOCK:", err.message);
-          // MODE MOCK : On simule une réussite pour la démonstration
-          alert('Commande enregistrée (Mode Démonstration). Merci !');
-          localStorage.removeItem('cart');
-          if (typeof window.updateCartUI === 'function') window.updateCartUI();
-          // Générer un ID fictif
-          const mockId = 'MOCK-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-          location.href = `confirmation.html?id=${mockId}`;
-        }
+        }, 500);
+
+        // Rediriger vers la page de confirmation après 5 secondes
+        setTimeout(() => {
+          console.log('🔄 Redirection vers la page de confirmation...');
+          location.href = `confirmation.html?id=${orderId}`;
+        }, 5000);
       });
     });
   </script>

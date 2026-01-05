@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Direct WhatsApp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+            background: #f5f5f5;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #25D366;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #25D366;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .btn:hover {
+            background: #128C7E;
+        }
+
+        .info {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        code {
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>📱 Test WhatsApp Direct</h1>
+
+        <p style="font-size: 18px; margin-bottom: 30px;">
+            Cliquez sur le bouton ci-dessous pour tester WhatsApp
+        </p>
+
+        <a href="https://wa.me/212642461561?text=🧪%20TEST%20-%20MIRAVA%20NATURE%0A%0ACeci%20est%20un%20test%20d'intégration%20WhatsApp.%0A%0ASi%20vous%20recevez%20ce%20message%2C%20tout%20fonctionne%20!"
+            class="btn" target="_blank" onclick="showResult()">
+            📱 TESTER WHATSAPP
+        </a>
+
+        <div class="info">
+            <strong>Votre numéro configuré :</strong><br>
+            <code>212642461561</code><br>
+            <small>(+212 6 42 46 15 61)</small>
+        </div>
+
+        <div id="result"
+            style="display:none; margin-top: 20px; padding: 15px; background: #d4edda; border-radius: 10px; color: #155724;">
+            <strong>✅ Si WhatsApp s'est ouvert :</strong><br>
+            L'intégration fonctionne ! Le problème est dans votre code.<br><br>
+            <strong>❌ Si rien ne s'est passé :</strong><br>
+            Vérifiez que WhatsApp est installé sur votre appareil.
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 10px; text-align: left;">
+            <strong>🔍 Diagnostic :</strong><br><br>
+
+            <strong>Option 1 : Ouvrir la console</strong><br>
+            1. Appuyez sur <code>F12</code><br>
+            2. Allez dans l'onglet "Console"<br>
+            3. Passez une commande sur votre site<br>
+            4. Regardez les erreurs en rouge<br><br>
+
+            <strong>Option 2 : Vider le cache</strong><br>
+            1. Appuyez sur <code>Ctrl+Shift+Delete</code><br>
+            2. Cochez "Images et fichiers en cache"<br>
+            3. Cliquez sur "Effacer les données"<br>
+            4. Rechargez la page<br><br>
+
+            <strong>Option 3 : Tester dans un autre navigateur</strong><br>
+            Essayez Chrome, Firefox, ou Edge
+        </div>
+    </div>
+
+    <script>
+        function showResult() {
+            setTimeout(() => {
+                document.getElementById('result').style.display = 'block';
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>
