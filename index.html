@@ -48,26 +48,71 @@
       <div class="hero-content">
         <h1>Nature & Beauté</h1>
         <p>Découvrez notre gamme de soins 100% naturels pour une peau éclatante.</p>
-        <a href="products.html" class="btn-premium">Découvrir nos produits</a>
+        <div style="margin-top: 30px;">
+          <a href="products.html" class="btn-premium">Découvrir nos produits</a>
+          <a href="kits.html" class="btn-outline" style="color: white; border-color: white; margin-left: 20px;">Voir les
+            coffrets</a>
+        </div>
       </div>
     </section>
 
-    <section id="presentation">
+    <!-- NOUVEAU: Catégories -->
+    <section id="categories" style="padding: 60px 0; background-color: #fdfdfd;">
+      <div class="container">
+        <h2 class="section-title">Nos Univers</h2>
+        <div class="categories-flex" style="display:flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+          <a href="products.html?cat=Visage" class="category-circle reveal">
+            <div class="cat-img" style="background-color: #E8F5E9;">🌿</div>
+            <span>Visage</span>
+          </a>
+          <a href="products.html?cat=Corps" class="category-circle reveal delay-100">
+            <div class="cat-img" style="background-color: #FFF3E0;">🧴</div>
+            <span>Corps</span>
+          </a>
+          <a href="products.html?cat=Cheveux" class="category-circle reveal delay-200">
+            <div class="cat-img" style="background-color: #E1F5FE;">✨</div>
+            <span>Cheveux</span>
+          </a>
+          <a href="kits.html" class="category-circle reveal delay-300">
+            <div class="cat-img" style="background-color: #FCE4EC;">🎁</div>
+            <span>Coffrets</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Coups de Cœur -->
+    <section id="featured-products" style="padding: 80px 0;">
+      <div class="container">
+        <h2 class="section-title">Nos Coups de Cœur</h2>
+        <div id="featured-grid" class="products-grid">
+          <!-- Injecté par JS -->
+        </div>
+        <div style="text-align: center; margin-top: 40px;">
+          <a href="products.html" class="btn-outline">Voir tout le catalogue</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="presentation" style="background-color: #f9f9f9;">
       <div class="container">
         <h2>Nos engagements</h2>
         <div class="engagements-grid">
-          <div class="engagement-card">
-            <h3>🌿 100% Naturel</h3>
+          <div class="engagement-card reveal">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🌿</div>
+            <h3>100% Naturel</h3>
             <p>Chaque produit est formulé avec des ingrédients purs et bruts, pour le plus grand respect de votre peau.
             </p>
           </div>
-          <div class="engagement-card">
-            <h3>👐 Fait Main</h3>
+          <div class="engagement-card reveal delay-100">
+            <div style="font-size: 3rem; margin-bottom: 15px;">👐</div>
+            <h3>Fait Main</h3>
             <p>Nos soins sont préparés avec amour dans notre atelier, garantissant une qualité et une fraîcheur uniques.
             </p>
           </div>
-          <div class="engagement-card">
-            <h3>🌍 Éthique</h3>
+          <div class="engagement-card reveal delay-200">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🌍</div>
+            <h3>Éthique</h3>
             <p>Nous privilégions les ingrédients locaux et des emballages respectueux de l'environnement.</p>
           </div>
         </div>
@@ -98,7 +143,42 @@
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
   <script src="js/cart.js"></script>
-  <script src="js/animations.js"></script> <!-- Animation Script -->
+  <script src="js/animations.js"></script>
+  <script src="products-data.js"></script> <!-- Data -->
+
+  <script>
+    // Render Featured Products (3 random items)
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('featured-grid');
+      if (container && typeof allProducts !== 'undefined') {
+        const keys = Object.keys(allProducts);
+        // Select specific best sellers or random
+        const featuredKeys = ['serum-visage', 'bougie-massage', 'huile-corps'];
+
+        featuredKeys.forEach(key => {
+          const product = allProducts[key];
+          if (!product) return;
+
+          const card = document.createElement('div');
+          card.className = 'product-card reveal'; // Add reveal animation
+          card.innerHTML = `
+                <a href="produit-detail.html?id=${product.id}" class="product-link" style="display:block;color:inherit;text-decoration:none">
+                    <img src="${product.image}" alt="${product.name}" class="product-thumb">
+                    <div class="body">
+                        <h3>${product.name}</h3>
+                        <p class="short-desc">${product.short_description}</p>
+                        <div class="actions" style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+                            <span class="price">${product.price} MAD</span>
+                            <span class="btn-premium btn-small" style="padding: 8px 16px; font-size: 13px;">Voir</span>
+                        </div>
+                    </div>
+                </a>
+            `;
+          container.appendChild(card);
+        });
+      }
+    });
+  </script>
 
   <!-- ==================== SCRIPT DU PANIER ==================== -->
   <script>
